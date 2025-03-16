@@ -1,0 +1,40 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/1/Mux8Way16.hdl
+/**
+ * 8-way 16-bit multiplexor:
+ * out = a if sel = 000
+ *       b if sel = 001
+ *       c if sel = 010
+ *       d if sel = 011
+ *       e if sel = 100
+ *       f if sel = 101
+ *       g if sel = 110
+ *       h if sel = 111
+ */
+CHIP Mux8Way16 {
+    IN a[16], b[16], c[16], d[16],
+       e[16], f[16], g[16], h[16],
+       sel[3];
+    OUT out[16];
+
+    PARTS:
+    //// Replace this comment with your code.
+    Not(in=sel[2], out=outSel);
+
+    Mux4Way16(a=a, b=b, c=c, d=d, sel=sel[0..1], out=outFirstHalf);
+    And16(a=outFirstHalf, b[0]=outSel, b[1]=outSel, b[2]=outSel,
+    b[3]=outSel, b[4]=outSel, b[5]=outSel, b[6]=outSel, b[7]=outSel,
+    b[8]=outSel, b[9]=outSel, b[10]=outSel, b[11]=outSel, b[12]=outSel,
+    b[13]=outSel, b[14]=outSel, b[15]=outSel, out=outX);
+
+    Mux4Way16(a=e, b=f, c=g, d=h, sel=sel[0..1], out=outSecondHalf);
+    And16(a=outSecondHalf, b[0]=sel[2], b[1]=sel[2], b[2]=sel[2],
+    b[3]=sel[2], b[4]=sel[2], b[5]=sel[2], b[6]=sel[2], b[7]=sel[2],
+    b[8]=sel[2], b[9]=sel[2], b[10]=sel[2], b[11]=sel[2], b[12]=sel[2],
+    b[13]=sel[2], b[14]=sel[2], b[15]=sel[2], out=outY);
+
+    Or16(a=outX, b=outY, out=out);
+    
+}
