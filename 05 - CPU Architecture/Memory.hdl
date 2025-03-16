@@ -1,0 +1,61 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/5/Memory.hdl
+/**
+ * The complete address space of the Hack computer's memory,
+ * including RAM and memory-mapped I/O. 
+ * The chip facilitates read and write operations, as follows:
+ *     Read:  out(t) = Memory[address(t)](t)
+ *     Write: if load(t-1) then Memory[address(t-1)](t) = in(t-1)
+ * In words: the chip always outputs the value stored at the memory 
+ * location specified by address. If load=1, the in value is loaded 
+ * into the memory location specified by address. This value becomes 
+ * available through the out output from the next time step onward.
+ * Address space rules:
+ * Only the upper 16K+8K+1 words of the Memory chip are used. 
+ * Access to address>0x6000 is invalid and reads 0. Access to any address
+ * in the range 0x4000-0x5FFF results in accessing the screen memory 
+ * map. Access to address 0x6000 results in accessing the keyboard 
+ * memory map. The behavior in these addresses is described in the Screen
+ * and Keyboard chip specifications given in the lectures and the book.
+ */
+CHIP Memory {
+    IN in[16], load, address[15];
+    OUT out[16];
+
+    PARTS:
+	//// Replace this comment with your code.
+    DMux(in=load, sel=address[14], a=l1, b=l2);
+    
+    RAM16K(in=in, load=l1, address=address[0..13], out=RAMout);
+    Screen(in=in, load=l2, address=address[0..12], out=ScrOut);
+
+    
+    //long tedious gate to check for illegal address use
+    //otherwise illegal addresses will show keyboard input 
+    //as side effect of final MUX4Way16
+    Or(a=address[0], b=address[1], out=o1);
+    Or(a=address[2], b=address[3], out=o2);
+    Or(a=address[4], b=address[5], out=o3);
+    Or(a=address[6], b=address[7], out=o4);
+    Or(a=address[8], b=address[9], out=o5);
+    Or(a=address[10],b=address[11],out=o6);
+    Or(a=o1, b=o2, out=oo1);
+    Or(a=o3, b=o4, out=oo2);
+    Or(a=o5, b=o6, out=oo3);
+    Or(a=oo1, b=address[12], out=ooo1);
+    Or(a=oo2, b=oo3, out=ooo2);
+    Or(a=ooo1, b=ooo2, out=illegalOut);
+    Not(in=illegalOut, out=legalOut);
+
+    And(a=address[13], b=address[14], out=kbOn);
+    And(a=legalOut, b=kbOn, out=keyOK);
+    Keyboard(out=kbOut);
+    
+    Mux16(a=false, b=kbOut, sel=keyOK, out=KeyOut);
+    
+ 
+    Mux4Way16(a=RAMout, b=RAMout, c=ScrOut, d=KeyOut, sel=address[13..14], out=out);
+    
+}
