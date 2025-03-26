@@ -10,7 +10,7 @@ namespace parsing{
     using InputFile = std::ifstream;
     using OutputFile = std::ofstream;
 
-    enum class Command
+    enum class AssemblyCommand
     {
         A_COMMAND,
         C_COMMAND,
@@ -19,8 +19,11 @@ namespace parsing{
     };
 
     class Parser;
-    class CommandList;
-    class JumpList;
+    class AssemblyParser;
+    class ParseMap;
+    class FileGenerator;
     class BinaryGenerator;
     class SymbolTable;
+
+    class HackTranslator;
 }

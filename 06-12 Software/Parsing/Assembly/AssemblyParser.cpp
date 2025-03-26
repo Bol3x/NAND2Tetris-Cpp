@@ -1,93 +1,47 @@
-#include "Parser.hpp"
-#include <regex>
+#include "AssemblyParser.hpp"
 
 namespace parsing{
-    Parser::Parser(const String& filename) : 
-    filename(filename),
-    currLine("")
-    {
-        inputFile.open(filename);
 
+    AssemblyParser::AssemblyParser(const String& filename)
+    : Parser(filename),
+    filename(filename)
+    {
         //load symbols on init
         loadSymbols();
         inputFile.close();
         inputFile.open(filename);
     }
 
-    String Parser::getLine()
-    {
-        return currLine;
-    }
-
-    bool Parser::hasMoreCommands()
-    {
-        return inputFile.eof() ? false : true;
-    }
-
-    void Parser::advanceLine()
-    {
-        //ignore whitespaces (including whitespace lines)
-        
-        //TODO: update whitespace removal to catch syntax errors for multi-word symbols
-        bool isInvalidLine = true;
-        String line;
-        do
-        {
-            if (! hasMoreCommands()) 
-            {
-                currLine = "";
-                return;
-            }
-            std::getline(inputFile, line);
-
-            //remove leading and trailing spaces
-            line = std::regex_replace(line, std::regex("^ +$"), "");
-
-            //ignore comments
-            if (line.length() == 0 || line.find("//") != line.npos)
-            {
-                continue;
-            }
-           
-            //remove any space in the actual instruction
-            line.erase(std::remove(line.begin(), line.end(), ' '), line.end() );
-
-            isInvalidLine = false;
-            currLine = line;
-
-        }while(isInvalidLine);
-    }
-
-    Command Parser::getCommandType()
+    AssemblyCommand AssemblyParser::getCommandType()
     {
         if (currLine[0] == '@')
         {
-            return Command::A_COMMAND;
+            return AssemblyCommand::A_COMMAND;
         }
         else if (currLine[0] == '(')
         {
-            return Command::L_COMMAND;
+            return AssemblyCommand::L_COMMAND;
         }
         else if (currLine.length() == 0)
         {
-            return Command::N_COMMAND;
+            return AssemblyCommand::N_COMMAND;
         }
         else
         {
-            return Command::C_COMMAND;
+            return AssemblyCommand::C_COMMAND;
         }
     }
 
-    String Parser::getSymbol()
+    String AssemblyParser::getSymbol()
     {
-        Command type = getCommandType();
+        AssemblyCommand type = getCommandType();
 
-        if (type == Command::C_COMMAND)
+        if (type == AssemblyCommand::C_COMMAND)
         {
             throw ("C-Instructions are not permitted.");
         }
 
-        if (type == Command::L_COMMAND)
+        if (type == AssemblyCommand::L_COMMAND)
         {
             return currLine.substr(1, currLine.length()-2);
         }
@@ -114,16 +68,16 @@ namespace parsing{
         }
     }
 
-    void Parser::loadSymbols()
+    void AssemblyParser::loadSymbols()
     {
         while (hasMoreCommands())
         {
             advanceLine();
             
-            Command cmd = getCommandType();
+            AssemblyCommand cmd = getCommandType();
 
             //if symbol is a label
-            if (cmd == Command::L_COMMAND)
+            if (cmd == AssemblyCommand::L_COMMAND)
             {
                 String symbol = currLine.substr(1, currLine.length()-2);
                 table.addInstructionEntry(symbol);
@@ -135,9 +89,9 @@ namespace parsing{
         }
     }
     
-    String Parser::getDest()
+    String AssemblyParser::getDest()
     {
-        if (getCommandType() != Command::C_COMMAND)
+        if (getCommandType() != AssemblyCommand::C_COMMAND)
         {
             throw ("Only C-Instructions are permitted.");
         }
@@ -148,9 +102,9 @@ namespace parsing{
         return currLine.substr(0, eq);
     }
 
-    String Parser::getComp()
+    String AssemblyParser::getComp()
     {
-        if (getCommandType() != Command::C_COMMAND)
+        if (getCommandType() != AssemblyCommand::C_COMMAND)
         {
             throw ("Only C-Instructions are permitted.");
         }
@@ -158,9 +112,9 @@ namespace parsing{
         return currLine.substr(currLine.find('=')+1, currLine.find(';'));
     }
 
-    String Parser::getJump()
+    String AssemblyParser::getJump()
     {
-        if (getCommandType() != Command::C_COMMAND)
+        if (getCommandType() != AssemblyCommand::C_COMMAND)
         {
             throw ("Only C-Instructions are permitted.");
         }
@@ -169,10 +123,5 @@ namespace parsing{
         if (jmp == currLine.npos) return "";
 
         return currLine.substr(jmp+1);
-    }
-
-    void Parser::closeFile()
-    {
-        inputFile.close();
     }
 }

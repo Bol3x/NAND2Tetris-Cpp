@@ -1,40 +1,15 @@
-#pragma once
+#include "Parser.cpp"
 
-#include "parsing.hpp"
-#include "SymbolTable.cpp"
-
-class parsing::Parser{
-    public:
-
+class parsing::AssemblyParser : public parsing::Parser {
+    public: 
+        
         /**
-         * @brief Construct a new Parser object.
+         * @brief Construct a new AssemblyParser object.
          * 
          * Opens the input file/stream and gets ready to parse it.
          * @param filename assembly text filename
          */
-        Parser(const String& filename);
-
-        /**
-         * @brief Get the currLine of Parser
-         * 
-         * @return String 
-         */
-        String getLine();
-
-        /**
-         * @brief Checks if there are more commands to parse from the input file.
-         * 
-         * @return true or
-         * @return false
-         */
-        bool hasMoreCommands();
-
-        /**
-         * @brief advances the text file to the next line to parse.
-         * 
-         * Only advances if `hasMoreCommands()` returns `true`.
-         */
-        void advanceLine();
+        AssemblyParser(const String& filename);
 
         /**
          * @brief determines the type of command being performed by the current line
@@ -49,7 +24,7 @@ class parsing::Parser{
          * 
          * @return enum type of the parsed command
          */
-        Command getCommandType();
+        AssemblyCommand getCommandType();
 
         /**
          * @brief Returns the symbol or decimal xxx from @xxx or (xxx).
@@ -94,15 +69,7 @@ class parsing::Parser{
          */
         String getJump();
 
-        /**
-         * @brief Closes inputfile.
-         * 
-         */
-        void closeFile();
-    
-    private:
-        String filename;
-        InputFile inputFile;
-        SymbolTable table;
-        String currLine;
+        private:
+            String filename;
+            SymbolTable table;
 };

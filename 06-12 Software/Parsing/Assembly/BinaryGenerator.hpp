@@ -1,12 +1,14 @@
 #include "parsing.hpp"
-#include "CommandList.cpp"
-#include "JumpList.cpp"
+#include "ParseMap.cpp"
+#include "FileGenerator.cpp"
+#include <memory>
 
-class parsing::BinaryGenerator{
+class parsing::BinaryGenerator : public FileGenerator
+{
     public:
 
         /**
-         * @brief Constructor for a BinaryGenerator object, outputting to the given filename
+         * @brief Constructor for a BinaryGenerator object, generating binary opcodes for Hack assembly instructions.
          * 
          * @param filename
          */
@@ -29,23 +31,8 @@ class parsing::BinaryGenerator{
          * @return String binary representation of resulting instruction
          */
         String generateAddressBinary(const String& symbol);
-
-
-        /**
-         * @brief Adds a line to the current output file stream
-         * 
-         * @param features - binary of command
-         */
-        void addLine(const String& binary);
-
-        /**
-         * @brief Closes outputfile.
-         * 
-         */
-        void closeFile();
     
     private:
-        OutputFile outputFile;
-        CommandList compList;
-        JumpList jumpList;
+        ParseMap compMap;
+        ParseMap jumpMap;
 };
