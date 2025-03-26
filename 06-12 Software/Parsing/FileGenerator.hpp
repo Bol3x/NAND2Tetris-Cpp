@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Parsing.hpp"
 
 class parsing::FileGenerator

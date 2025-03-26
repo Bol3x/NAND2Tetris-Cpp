@@ -1,4 +1,4 @@
-#include "Parser.cpp"
+#include "..\Parser.cpp"
 
 class parsing::AssemblyParser : public parsing::Parser {
     public: 

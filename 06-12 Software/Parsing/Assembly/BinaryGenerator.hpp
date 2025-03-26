@@ -1,6 +1,6 @@
-#include "parsing.hpp"
+#include "..\Parsing.hpp"
 #include "ParseMap.cpp"
-#include "FileGenerator.cpp"
+#include "..\FileGenerator.cpp"
 #include <memory>
 
 class parsing::BinaryGenerator : public FileGenerator

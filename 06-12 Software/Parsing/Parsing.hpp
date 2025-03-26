@@ -18,8 +18,16 @@ namespace parsing{
         N_COMMAND
     };
 
+    enum class VMCommand
+    {
+        ARITHMETIC,
+        PUSH,
+        POP
+    };
+
     class Parser;
     class AssemblyParser;
+    class VMParser;
     class ParseMap;
     class FileGenerator;
     class BinaryGenerator;
