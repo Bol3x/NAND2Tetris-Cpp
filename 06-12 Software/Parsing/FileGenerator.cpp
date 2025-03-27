@@ -1,5 +1,6 @@
+#pragma once
+
 #include "FileGenerator.hpp"
-#include <iostream>
 
 namespace parsing
 {
@@ -18,6 +19,7 @@ namespace parsing
         if (outputFile.is_open())
         {
             outputFile << binary << std::endl;
+            /*
             if (outputFile.fail())
             {
                 std::cout << "ERROR: Failed to write to file" << std::endl;
@@ -26,6 +28,7 @@ namespace parsing
             {
                 std::cout << "line has been written" << std::endl;
             }
+            */
         }
     }
 

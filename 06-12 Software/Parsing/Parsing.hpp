@@ -22,16 +22,20 @@ namespace parsing{
     {
         ARITHMETIC,
         PUSH,
-        POP
+        POP,
+        NA
     };
 
     class Parser;
     class AssemblyParser;
     class VMParser;
     class ParseMap;
-    class FileGenerator;
-    class BinaryGenerator;
     class SymbolTable;
 
+    class FileGenerator;
+    class BinaryGenerator;
+    class AssemblyGenerator;
+
     class HackTranslator;
+    class VMTranslator;
 }

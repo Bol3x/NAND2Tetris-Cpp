@@ -1,4 +1,5 @@
 *.txt
+*.vm
 *.asm
 *.hack
 .vscode

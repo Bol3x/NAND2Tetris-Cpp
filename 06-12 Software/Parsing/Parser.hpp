@@ -1,7 +1,5 @@
-#pragma once
-
 #include "Parsing.hpp"
-#include "SymbolTable.cpp"
+#include "Assembly\SymbolTable.cpp"
 
 class parsing::Parser{
     public:

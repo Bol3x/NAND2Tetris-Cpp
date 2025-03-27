@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Parser.hpp"
 #include <regex>
 
@@ -47,9 +49,6 @@ namespace parsing{
             {
                 continue;
             }
-           
-            //remove any space in the actual instruction
-            line.erase(std::remove(line.begin(), line.end(), ' '), line.end() );
 
             isInvalidLine = false;
             currLine = line;

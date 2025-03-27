@@ -1,6 +1,6 @@
 #include "HackTranslator.hpp"
 
-using namespace std;
+//using namespace std;
 
 namespace parsing
 {
@@ -24,7 +24,7 @@ namespace parsing
                 String address = reader.getSymbol();
 
                 String res = writer.generateAddressBinary(address);
-                cout << "result: " << res << endl;
+                //cout << "result: " << res << endl;
     
                 writer.addLine(res);
             }
@@ -40,7 +40,7 @@ namespace parsing
                 //cout << "jump: " << jump << endl;
     
                 String res = writer.generateCompBinary(comp, dest, jump);
-                cout << "result: " << res << endl;
+                //cout << "result: " << res << endl;
     
                 writer.addLine(res);
             }
