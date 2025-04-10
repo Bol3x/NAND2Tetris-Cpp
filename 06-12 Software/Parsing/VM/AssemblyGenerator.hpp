@@ -1,5 +1,4 @@
 #include "..\FileGenerator.cpp"
-#include "..\ParseMap.cpp"
 
 class parsing::AssemblyGenerator : public FileGenerator
 {
@@ -10,7 +9,7 @@ class parsing::AssemblyGenerator : public FileGenerator
          * @param filename 
          */
         AssemblyGenerator(const String& filename);
-
+        
         /**
          * @brief Writes the equivalent assembly code for the resulting stack instruction
          * 
@@ -27,7 +26,52 @@ class parsing::AssemblyGenerator : public FileGenerator
          */
         void writeArithmeticInstruction(const String& operation);
 
+
+        /**
+         * @brief Writes the equivalent assembly for declaring an instruction label
+         * 
+         * @param label - label string
+         */
+        void writeLabelInstruction(const String& label);
+
+        /**
+         * @brief Writes the jump to the label passed
+         * 
+         * @param label label to jump to
+         */
+        void writeGotoInstruction(const String& label);
+
+        /**
+         * @brief Writes a conditional jump to the label passed, checking the top of the stack as the decision variable
+         * 
+         * @param label label to jump to if condition is true
+         */
+        void writeIfGotoInstruction(const String& label);
+
+        /**
+         * @brief Writes the equivalent assembly for declaring the function with a set number of local variables allocated
+         * 
+         * @param functionName 
+         * @param nLocals 
+        */
+        void writeFunctionDeclaration(const String& functionName, const int& nLocals);
+
+        /**
+         * @brief Writes the equivalent assembly for calling a function with a set number of arguments passed
+         * 
+         * @param functionName 
+         * @param nArgs 
+         */
+        void writeCallInstruction(const String& functionName, const int& nArgs);
+
+        /**
+         * @brief Writes the equivalent assembly for returning a function's result to the caller and handing over program control
+         * 
+         */
+        void writeReturnInstruction();
+
     private:
-        ParseMap ops;
-        String VMName;
+        String VMName;  //filename to identify static variables and function declarations
+        int jumpIndex = 0;  //to avoid repeat labels
+        int retIndex = 0;   //return index for function calls
 };

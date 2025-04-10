@@ -19,21 +19,74 @@ namespace parsing
 
             VMCommand command = reader.getCommandType();
 
-            if (command == VMCommand::ARITHMETIC)
+            String firstArg = "";
+            int secondArg = 0;
+            switch (command)
             {
-                String arg = reader.getFirstArg();
-                cout << "arg: " << arg << endl;
-                writer.writeArithmeticInstruction(arg);
-            }
-            else if (command != VMCommand::NA)
-            {
-                String segment = reader.getFirstArg();
-                int index = reader.getSecondArg();
+                case VMCommand::VM_ARITHMETIC:
+                    firstArg = reader.getFirstArg();
+                    cout << "arg: " << firstArg << endl;
+                    writer.writeArithmeticInstruction(firstArg);
+                    break;
+                
+                case VMCommand::VM_POP:
+                case VMCommand::VM_PUSH:
+                    firstArg  = reader.getFirstArg();
+                    secondArg = reader.getSecondArg();
 
-                cout << "Segment: " << segment << endl;
-                cout << "index: " << index << endl;
+                    cout << "Segment: " << firstArg << endl;
+                    cout << "index: " << secondArg << endl;
 
-                writer.writeStackInstruction(command, segment, index);
+                    writer.writeStackInstruction(command, firstArg, secondArg);
+                    break;
+
+                case VMCommand::VM_LABEL:
+                    firstArg = reader.getFirstArg();
+                    
+                    cout << "Label: " << firstArg << endl;
+
+                    writer.writeLabelInstruction(firstArg);
+                    break;
+
+                case VMCommand::VM_GOTO:
+                    firstArg = reader.getFirstArg();
+
+                    cout << "Jump Label: " << firstArg << endl;
+
+                    writer.writeGotoInstruction(firstArg);
+                    break;
+
+                case VMCommand::VM_IFGOTO:
+                    firstArg = reader.getFirstArg();
+
+                    cout << "Jump Label: " << firstArg << endl;
+
+                    writer.writeIfGotoInstruction(firstArg);
+                    break;
+
+                case VMCommand::VM_FUNCTION:
+                    firstArg = reader.getFirstArg();
+                    secondArg = reader.getSecondArg();
+
+                    cout << "Function name: " << firstArg << endl;
+                    cout << "Num Local vars: " << secondArg << endl;
+
+                    writer.writeFunctionDeclaration(firstArg, secondArg);
+                    break;
+
+                case VMCommand::VM_CALL:
+                    firstArg = reader.getFirstArg();
+                    secondArg = reader.getSecondArg();
+
+                    cout << "Function name: " << firstArg << endl;
+                    cout << "Num Arguments: " << secondArg << endl;
+
+                    writer.writeCallInstruction(firstArg, secondArg);
+                    break;
+
+                case VMCommand::VM_RETURN:
+                    writer.writeReturnInstruction();
+                    break;
             }
         }
     }

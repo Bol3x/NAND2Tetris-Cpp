@@ -20,10 +20,16 @@ namespace parsing{
 
     enum class VMCommand
     {
-        ARITHMETIC,
-        PUSH,
-        POP,
-        NA
+        VM_ARITHMETIC,
+        VM_PUSH,
+        VM_POP,
+        VM_GOTO,
+        VM_IFGOTO,
+        VM_LABEL,
+        VM_FUNCTION,
+        VM_RETURN,
+        VM_CALL,
+        VM_NA
     };
 
     class Parser;

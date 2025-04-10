@@ -10,9 +10,6 @@ namespace parsing{
     {
         Parser::advanceLine();
 
-        std::cout << "Extracting words from: " << currLine << std::endl;
-        
-
         words.clear();
         std::istringstream iss(currLine);
         String item;
@@ -20,8 +17,6 @@ namespace parsing{
         {
             if (item.length() != 0)
             {
-                std::cout << "word: " << item << std::endl;
-                
                 words.push_back(item);
             }
         }
@@ -31,7 +26,7 @@ namespace parsing{
     {
         if (currLine.length() == 0)
         {
-            return VMCommand::NA;
+            return VMCommand::VM_NA;
         }
 
         String instruction = "";
@@ -42,21 +37,57 @@ namespace parsing{
 
         if (instruction == "push")
         {
-            return VMCommand::PUSH;
+            return VMCommand::VM_PUSH;
         }
 
         if (instruction == "pop")
         {
-            return VMCommand::POP;
+            return VMCommand::VM_POP;
         }
 
-        return VMCommand::ARITHMETIC;
+        if (instruction == "label")
+        {
+            return VMCommand::VM_LABEL;
+        }
+
+        if (instruction == "goto")
+        {
+            return VMCommand::VM_GOTO;
+        }
+
+        if (instruction == "if-goto")
+        {
+            return VMCommand::VM_IFGOTO;
+        }
+
+        if (instruction == "function")
+        {
+            return VMCommand::VM_FUNCTION;
+        }
+
+        if (instruction == "label")
+        {
+            return VMCommand::VM_LABEL;
+        }
+
+        if (instruction == "call")
+        {
+            return VMCommand::VM_CALL;
+        }
+
+        if (instruction == "return")
+        {
+            return VMCommand::VM_RETURN;
+        }
+        
+
+        return VMCommand::VM_ARITHMETIC;
     }
 
     String VMParser::getFirstArg()
     {
 
-        if (getCommandType() == VMCommand::ARITHMETIC)
+        if (getCommandType() == VMCommand::VM_ARITHMETIC)
             return words[0];
 
         return words[1];
