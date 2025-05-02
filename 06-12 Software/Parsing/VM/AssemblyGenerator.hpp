@@ -1,6 +1,7 @@
 #include "..\FileGenerator.cpp"
+#include "HackVM.hpp"
 
-class parsing::AssemblyGenerator : public FileGenerator
+class parsing::HackVM::AssemblyGenerator : public FileGenerator
 {
     public:
         /**

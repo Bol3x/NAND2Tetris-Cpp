@@ -1,7 +1,8 @@
 #include "..\Parser.cpp"
+#include "HackVM.hpp"
 #include <vector>
 
-class parsing::VMParser : public Parser
+class parsing::HackVM::VMParser : public Parser
 {
     public:
         /**

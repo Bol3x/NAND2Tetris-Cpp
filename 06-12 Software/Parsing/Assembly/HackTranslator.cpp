@@ -2,7 +2,7 @@
 
 //using namespace std;
 
-namespace parsing
+namespace parsing::HackAssembly
 {
     HackTranslator::HackTranslator(const String& in, const String& out) :
     reader(in), writer(out)

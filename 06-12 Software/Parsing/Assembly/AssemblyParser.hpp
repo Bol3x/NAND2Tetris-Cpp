@@ -1,6 +1,7 @@
 #include "..\Parser.cpp"
+#include "HackAssembly.hpp"
 
-class parsing::AssemblyParser : public parsing::Parser {
+class parsing::HackAssembly::AssemblyParser : public parsing::Parser {
     public: 
         
         /**

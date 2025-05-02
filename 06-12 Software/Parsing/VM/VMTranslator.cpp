@@ -3,7 +3,7 @@
 
 using namespace std;
 
-namespace parsing
+namespace parsing::HackVM
 {
     VMTranslator::VMTranslator(const String& in, const String& out) :
     reader(in), writer(out)

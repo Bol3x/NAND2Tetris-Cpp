@@ -1,7 +1,7 @@
 #include "VMParser.hpp"
 #include <sstream>
 
-namespace parsing{
+namespace parsing::HackVM{
 
     VMParser::VMParser(const String& inputfile) : Parser(inputfile)
     {}

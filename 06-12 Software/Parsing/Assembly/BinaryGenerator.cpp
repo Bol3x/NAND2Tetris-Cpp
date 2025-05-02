@@ -1,6 +1,6 @@
 #include "BinaryGenerator.hpp"
 
-namespace parsing
+namespace parsing::HackAssembly
 {
         BinaryGenerator::BinaryGenerator(const String& filename) : 
         FileGenerator(filename),

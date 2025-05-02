@@ -10,14 +10,6 @@ namespace parsing{
     using InputFile = std::ifstream;
     using OutputFile = std::ofstream;
 
-    enum class AssemblyCommand
-    {
-        A_COMMAND,
-        C_COMMAND,
-        L_COMMAND,
-        N_COMMAND
-    };
-
     enum class VMCommand
     {
         VM_ARITHMETIC,
@@ -33,15 +25,6 @@ namespace parsing{
     };
 
     class Parser;
-    class AssemblyParser;
-    class VMParser;
     class ParseMap;
-    class SymbolTable;
-
     class FileGenerator;
-    class BinaryGenerator;
-    class AssemblyGenerator;
-
-    class HackTranslator;
-    class VMTranslator;
 }

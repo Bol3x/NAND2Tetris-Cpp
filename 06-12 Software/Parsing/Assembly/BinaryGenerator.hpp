@@ -1,9 +1,9 @@
-#include "..\Parsing.hpp"
+#include "HackAssembly.hpp"
 #include "..\ParseMap.cpp"
 #include "..\FileGenerator.cpp"
 #include <memory>
 
-class parsing::BinaryGenerator : public FileGenerator
+class parsing::HackAssembly::BinaryGenerator : public FileGenerator
 {
     public:
 

@@ -1,6 +1,6 @@
 #include "SymbolTable.hpp"
 
-namespace parsing{
+namespace parsing::HackAssembly{
 
     SymbolTable::SymbolTable()
     {

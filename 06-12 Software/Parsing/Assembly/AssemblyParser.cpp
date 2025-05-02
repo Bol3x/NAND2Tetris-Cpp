@@ -1,6 +1,6 @@
 #include "AssemblyParser.hpp"
 
-namespace parsing{
+namespace parsing::HackAssembly{
 
     AssemblyParser::AssemblyParser(const String& filename)
     : Parser(filename),

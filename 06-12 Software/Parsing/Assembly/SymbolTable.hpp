@@ -1,11 +1,11 @@
-#include "..\Parsing.hpp"
+#include "HackAssembly.hpp"
 #include <unordered_map>
 
-class parsing::SymbolTable{
+class parsing::HackAssembly::SymbolTable{
     public:
 
         /**
-         * @brief Initializes defailt symbols (R0-R32, SP, etc.)
+         * @brief Initializes defailt symbols (R0-R31, SP, etc.)
          * 
          */
         SymbolTable();

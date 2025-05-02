@@ -1,6 +1,7 @@
 #include "AssemblyGenerator.hpp"
+#include "HackVM.hpp"
 
-namespace parsing{
+namespace parsing::HackVM{
     AssemblyGenerator::AssemblyGenerator(const String& filename) :
     FileGenerator(filename)
     {

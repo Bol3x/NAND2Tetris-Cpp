@@ -1,7 +1,7 @@
 #include "AssemblyParser.cpp"
 #include "BinaryGenerator.cpp"
 
-class parsing::HackTranslator
+class parsing::HackAssembly::HackTranslator
 {
     public:
         /**

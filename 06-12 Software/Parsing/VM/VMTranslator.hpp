@@ -1,7 +1,7 @@
 #include "VMParser.cpp"
 #include "AssemblyGenerator.cpp"
 
-class parsing::VMTranslator
+class parsing::HackVM::VMTranslator
 {
     public:
         VMTranslator(const String& in, const String& out);
