@@ -1,4 +1,5 @@
 #include "..\Parser.cpp"
+#include "SymbolTable.hpp"
 #include "HackAssembly.hpp"
 
 class parsing::HackAssembly::AssemblyParser : public parsing::Parser {

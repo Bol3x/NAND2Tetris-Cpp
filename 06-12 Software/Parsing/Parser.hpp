@@ -1,5 +1,4 @@
 #include "Parsing.hpp"
-#include "Assembly\SymbolTable.cpp"
 
 class parsing::Parser{
     public:
