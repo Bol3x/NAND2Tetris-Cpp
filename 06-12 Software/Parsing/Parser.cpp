@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Parser.hpp"
+#include "Parser.h"
 #include <regex>
 
 namespace parsing{
@@ -26,10 +26,7 @@ namespace parsing{
     }
 
     void Parser::advanceLine()
-    {
-        //ignore whitespaces (including whitespace lines)
-        
-        //TODO: update whitespace removal to catch syntax errors for multi-word symbols
+    {   
         bool isInvalidLine = true;
         String line;
         do
@@ -41,11 +38,10 @@ namespace parsing{
             }
             std::getline(inputFile, line);
 
-            //remove leading and trailing spaces
-            line = std::regex_replace(line, std::regex("^ +$"), "");
+            //remove leading and trailing spaces and comments
+            line = std::regex_replace(line, std::regex("^[\t ]+| *//.*"), "");
 
-            //ignore comments
-            if (line.length() == 0 || line.find("//") != line.npos)
+            if (line.length() == 0)
             {
                 continue;
             }

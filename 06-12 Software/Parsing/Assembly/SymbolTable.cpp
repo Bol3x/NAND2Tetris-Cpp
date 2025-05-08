@@ -1,4 +1,4 @@
-#include "SymbolTable.hpp"
+#include "SymbolTable.h"
 
 namespace parsing::HackAssembly{
 
@@ -9,6 +9,7 @@ namespace parsing::HackAssembly{
         table["ARG"] = 2;
         table["THIS"] = 3;
         table["THAT"] = 4;
+        table["TEMP"] = 5;
         
         String reg = "R";
         for(int i = 0; i < 16; i++)
@@ -17,7 +18,7 @@ namespace parsing::HackAssembly{
             table[r] = i;
         }
 
-        table["SCREEN"] = 0x4000;
+        table["SCREEN"] = 0x4000;   
         table["KBD"] = 0x6000;
     }
 
@@ -38,6 +39,7 @@ namespace parsing::HackAssembly{
         if (! containsEntry(symbol))
         {
             table.insert({symbol, instructionAddress});
+            std::cout << "New symbol added: " << symbol << " at address " << instructionAddress << std::endl;
         }
     }
 

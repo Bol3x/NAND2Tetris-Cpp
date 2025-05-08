@@ -1,4 +1,4 @@
-#include "VMTranslator.hpp"
+#include "VMTranslator.h"
 #include <iostream>
 
 using namespace std;
@@ -30,7 +30,10 @@ namespace parsing::HackVM
                     break;
                 
                 case VMCommand::VM_POP:
+                    cout << "POP" << endl;
                 case VMCommand::VM_PUSH:
+                    if (command == VMCommand::VM_PUSH)
+                        cout << "PUSH" << endl;
                     firstArg  = reader.getFirstArg();
                     secondArg = reader.getSecondArg();
 
@@ -59,7 +62,7 @@ namespace parsing::HackVM
                 case VMCommand::VM_IFGOTO:
                     firstArg = reader.getFirstArg();
 
-                    cout << "Jump Label: " << firstArg << endl;
+                    cout << "Conditional Jump Label: " << firstArg << endl;
 
                     writer.writeIfGotoInstruction(firstArg);
                     break;

@@ -1,4 +1,4 @@
-#include "VMParser.hpp"
+#include "VMParser.h"
 #include <sstream>
 
 namespace parsing::HackVM{

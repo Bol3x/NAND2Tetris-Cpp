@@ -1,5 +1,5 @@
 #include "..\FileGenerator.cpp"
-#include "HackVM.hpp"
+#include "HackVM.h"
 
 class parsing::HackVM::AssemblyGenerator : public FileGenerator
 {

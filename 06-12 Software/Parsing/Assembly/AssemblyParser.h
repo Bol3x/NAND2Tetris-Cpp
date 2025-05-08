@@ -1,6 +1,6 @@
 #include "..\Parser.cpp"
-#include "SymbolTable.hpp"
-#include "HackAssembly.hpp"
+#include "SymbolTable.cpp"
+#include "HackAssembly.h"
 
 class parsing::HackAssembly::AssemblyParser : public parsing::Parser {
     public: 

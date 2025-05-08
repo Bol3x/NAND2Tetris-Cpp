@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ParseMap.hpp"
+#include "ParseMap.h"
 
 namespace parsing{
     ParseMap::ParseMap(const std::unordered_map<String, String>& map)

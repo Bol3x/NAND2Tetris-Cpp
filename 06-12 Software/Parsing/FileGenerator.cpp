@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FileGenerator.hpp"
+#include "FileGenerator.h"
 
 namespace parsing
 {
@@ -14,11 +14,11 @@ namespace parsing
         outputFile.close();
     }
 
-    void FileGenerator::addLine(const String& binary)
+    void FileGenerator::addLine(const String& line)
     {
         if (outputFile.is_open())
         {
-            outputFile << binary << std::endl;
+            outputFile << line << std::endl;
             /*
             if (outputFile.fail())
             {

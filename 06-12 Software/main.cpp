@@ -6,16 +6,16 @@
 using namespace parsing;
 
 int main(){
-    String inputASM = ".\\testfiles\\Max.asm", outputByte = ".\\testfiles\\Max.hack";
-    //String inputVM  = ".\\testfiles\\StackTest.vm", outputASM = ".\\testfiles\\StackTest.asm";
+    String inputASM = ".\\testfiles\\SimpleFunction.asm", outputByte = ".\\testfiles\\SimpleFunction.hack";
+    String inputVM  = ".\\testfiles\\SimpleFunction.vm", outputASM = ".\\testfiles\\SimpleFunction.asm";
+
+    HackVM::VMTranslator vm(inputVM, outputASM);
+
+    vm.generateAssembly();
 
     HackAssembly::HackTranslator hack(inputASM, outputByte);
 
-    //VMTranslator vm(inputVM, outputASM);
-
     hack.generateOpcode();
-
-    //vm.generateAssembly();
     
     return 0;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../Parsing.hpp"
+#include "../Parsing.h"
+#include <regex>
 
 namespace parsing::HackVM
 {
