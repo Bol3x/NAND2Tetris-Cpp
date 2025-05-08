@@ -44,8 +44,8 @@ namespace parsing{
             //remove leading and trailing spaces
             line = std::regex_replace(line, std::regex("^ +$"), "");
 
-            //ignore comments
-            if (line.length() == 0 || line.find("//") != line.npos)
+            //todo: ignore comments
+            if (line.length() == 0)
             {
                 continue;
             }
