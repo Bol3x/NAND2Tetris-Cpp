@@ -1,4 +1,4 @@
-#include "BinaryGenerator.hpp"
+#include "BinaryGenerator.h"
 
 namespace parsing::HackAssembly
 {
@@ -10,7 +10,9 @@ namespace parsing::HackAssembly
             {"-1", "111010"},
             {"D", "001100"},
             {"A", "110000"}, {"M","110000"},
-            {"!D", "001111"},
+            {"-D", "001111"},
+            {"-A", "110011"}, {"-M", "110011"},
+            {"!D", "001101"},
             {"!A", "110001"}, {"!M","110001"},
             {"D+1", "011111"},
             {"A+1", "110111"}, {"M+1", "110111"},

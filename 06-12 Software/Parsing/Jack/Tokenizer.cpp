@@ -1,4 +1,4 @@
-#include "Tokenizer.hpp"
+#include "Tokenizer.h"
 
 namespace parsing::JackCompiler
 {
@@ -39,7 +39,7 @@ namespace parsing::JackCompiler
 
                     //find the end of the multi-line comment
                     while (currLineIt == currLine.npos && hasMoreCommands()){
-                        advanceLine();
+                        Parser::advanceLine();
                         currLineIt = currLine.find("*/");
                     }
 
@@ -99,6 +99,10 @@ namespace parsing::JackCompiler
         }
 
         currToken = "";
+    }
+
+    String Tokenizer::getCurrToken(){
+        return currToken;
     }
 
     JackTokenType Tokenizer::getTokenType()

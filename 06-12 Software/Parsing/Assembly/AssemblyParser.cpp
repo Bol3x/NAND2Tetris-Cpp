@@ -1,4 +1,4 @@
-#include "AssemblyParser.hpp"
+#include "AssemblyParser.h"
 
 namespace parsing::HackAssembly{
 
@@ -6,7 +6,6 @@ namespace parsing::HackAssembly{
     : Parser(filename),
     filename(filename)
     {
-        //load symbols on init
         loadSymbols();
         inputFile.close();
         inputFile.open(filename);
@@ -49,18 +48,18 @@ namespace parsing::HackAssembly{
         {
             String res = currLine.substr(1, currLine.length()-1);
 
-            //if it's a symbol and not a number, find it in the SymbolTable
-            if (! (res.at(0) >= 48 && res.at(0) <= 57))
+            //if it's a symbol and not a number, find it in the SymbolTable and directly translate it into its address
+            if (! (res.at(0) >= '0' && res.at(0) <= '9'))
             {
                 if (table.containsEntry(res))
                 {
                     int addr = table.getAddress(res);
                     return std::to_string(addr);
                 }
-                else    //if it's not in the table, add as a variable
+                else    //if it's still not in the table, add as a new variable
                 {
-                    String symbol = res;
-                    table.addVariableEntry(symbol);
+                    table.addVariableEntry(res);
+                    return std::to_string(table.getAddress(res));
                 }
             }
 

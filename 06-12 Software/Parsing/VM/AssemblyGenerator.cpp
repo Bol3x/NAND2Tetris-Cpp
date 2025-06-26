@@ -1,11 +1,17 @@
-#include "AssemblyGenerator.hpp"
-#include "HackVM.hpp"
+#include "AssemblyGenerator.h"
+#include "HackVM.h"
 
 namespace parsing::HackVM{
     AssemblyGenerator::AssemblyGenerator(const String& filename) :
     FileGenerator(filename)
     {
-        VMName = filename.substr(0, filename.find('.'));
+        std::regex filenameRegex(R"([^\\/]+?(?=\..*?$|[\\/]*$))");
+        std::smatch match;
+
+        if (std::regex_search(filename, match, filenameRegex))
+        {
+            VMName = match[0].str();
+        }
     }
 
     void AssemblyGenerator::writeStackInstruction(const VMCommand& command, const String& memorySegment, const int& index) 
@@ -35,9 +41,8 @@ namespace parsing::HackVM{
             }
             else if (memorySegment == "pointer")
             {
-                result = (index) ? "THAT\n" : "THIS\n";
+                result = (index) ? "@THAT\n" : "@THIS\n";
                 result =    result +
-                            "A=M\n" +
                             "D=M\n" +
                             "@SP\n" +
                             "A=M\n" +
@@ -45,26 +50,38 @@ namespace parsing::HackVM{
                             "@SP\n" +
                             "M=M+1";
             }
-            else //local, argument, this, that
+            else //local, argument, this, that, temp
             {
-                result =    "@"+VMName+"."+std::to_string(index)+"\n" +
+                result =    "@"+std::to_string(index)+"\n" +
                             "D=A\n";
 
                 if (memorySegment == "local"){
-                    result = result + "@LCL\n";
+                    result = result + 
+                             "@LCL\n" +
+                             "A=D+M\n";
                 }
                 else if (memorySegment == "argument"){
-                    result = result + "@ARG\n";
+                    result = result + 
+                             "@ARG\n" +
+                             "A=D+M\n";
                 }
                 else if (memorySegment == "this"){
-                    result = result + "@THIS\n";
+                    result = result + 
+                             "@THIS\n" +
+                             "A=D+M\n";
                 }
                 else if (memorySegment == "that"){
-                    result = result + "@THAT\n";
+                    result = result + 
+                             "@THAT\n" +
+                             "A=D+M\n";
+                }
+                else if (memorySegment == "temp"){
+                    result = result + 
+                             "@TEMP\n" + 
+                             "A=D+A\n";
                 }
 
                 result = result + 
-                        "A=D+A\n" + 
                         "D=M\n" +
                         "@SP\n" +
                         "A=M\n" +
@@ -81,7 +98,6 @@ namespace parsing::HackVM{
                 result =    result +
                             "@SP\n" + 
                             "AM=M-1\n" +
-                            "A=M\n" +
                             "D=M\n" + 
                             "@"+std::to_string(index)+"\n" +
                             "M=D";
@@ -90,22 +106,19 @@ namespace parsing::HackVM{
             {
                 result =    result +
                             "@SP\n" +
-                            "M=M-1\n" + 
-                            "A=M\n" +
+                            "AM=M-1\n" + 
                             "D=M\n" +
-                            "@"+VMName+"\n" +
+                            "@"+VMName+"."+std::to_string(index)+"\n" +
                             "M=D";
             }
             else if(memorySegment == "pointer")
             {
                 result =    result + 
                             "@SP\n" +
-                            "M=M-1\n" +
-                            "A=M\n" +
+                            "AM=M-1\n" +
                             "D=M\n";
                 
-                result =    result + ((index) ? "@THIS\n" : "@THAT\n")+
-                            "A=M\n" +
+                result =    result + ((index) ? "@THAT\n" : "@THIS\n")+
                             "M=D";
             }
             else
@@ -114,26 +127,38 @@ namespace parsing::HackVM{
                             "D=A\n";
 
                 if (memorySegment == "local"){
-                    result = result + "@LCL\n";
+                    result = result + 
+                             "@LCL\n" +
+                             "D=D+M\n";
                 }
                 else if (memorySegment == "argument"){
-                    result = result + "@ARG\n";
+                    result = result + 
+                             "@ARG\n" +
+                             "D=D+M\n";
                 }
                 else if (memorySegment == "this"){
-                    result = result + "@THIS\n";
+                    result = result + 
+                             "@THIS\n" +
+                             "D=D+M\n";
                 }
                 else if (memorySegment == "that"){
-                    result = result + "@THAT\n";
+                    result = result + 
+                             "@THAT\n" +
+                             "D=D+M\n";
+                }
+                else if (memorySegment == "temp"){
+                    result = result + 
+                             "@TEMP\n" + 
+                             "D=D+A\n";
                 }
 
                 result =    result + 
-                            "D=D+A\n" +
-                            "@5\n" +
+                            "@13\n" +
                             "M=D\n" +
                             "@SP\n" +
                             "AM=M-1\n" +
                             "D=M\n" +
-                            "@5\n" +
+                            "@13\n" +
                             "A=M\n" +
                             "M=D";
 
@@ -186,7 +211,7 @@ namespace parsing::HackVM{
                         "@SP\n" +
                         "AM=M-1\n" +
                         "D=M-D\n" +
-                        "@TRUE." + std::to_string(jumpIndex) + "\n";
+                        "@TRUE." + VMName + "." + std::to_string(jumpIndex) + "\n";
             if (operation == "eq")
             {
                 result = result + "D;JEQ\n";
@@ -201,11 +226,11 @@ namespace parsing::HackVM{
             }
 
             result =    result + "D=0\n" +
-                        "@RETURN." + std::to_string(jumpIndex) + "\n" +
+                        "@RETURN." + VMName + "." + std::to_string(jumpIndex) + "\n" +
                         "0;JMP\n" +
-                        "(TRUE." + std::to_string(jumpIndex) + ")\n" +
+                        "(TRUE." + VMName + "." + std::to_string(jumpIndex) + ")\n" +
                         "D=-1\n" +
-                        "(RETURN." + std::to_string(jumpIndex) + ")\n" +
+                        "(RETURN." + VMName + "." + std::to_string(jumpIndex) + ")\n" +
                         "@SP\n" +
                         "A=M\n" +
                         "M=D\n" +
@@ -229,14 +254,16 @@ namespace parsing::HackVM{
         String result = "";
         
         result =    result + "@"+label+"\n" +
-                    "0;JMP";
+                    "0;JMP\n";
 
         addLine(result);
     }
 
     void AssemblyGenerator::writeIfGotoInstruction(const String& label)
     {
-        String result = result + "@SP\n" +
+        String result = "";
+        
+        result =        result + "@SP\n" +
                         "AM=M-1\n" +
                         "D=M\n" +
                         "@"+label+"\n" +
@@ -247,7 +274,9 @@ namespace parsing::HackVM{
 
     void AssemblyGenerator::writeFunctionDeclaration(const String& functionName, const int& nLocals)
     {
-        String result = "("+VMName+functionName+")\n" +
+        String result = "";
+        
+        result =        result + "("+VMName+"."+functionName+")\n" +
                         "@" + std::to_string(nLocals) + "\n" + //move SP +nLocals forward
                         "D=D+A\n" +
                         "@SP\n" +
@@ -309,7 +338,7 @@ namespace parsing::HackVM{
                         "D=M\n" +
                         "@LCL\n" +
                         "M=D\n" +
-                        "@"+functionName+"\n" + //jump to the function
+                        "@"+VMName+"."+functionName+"\n" + //jump to the function
                         "0;JMP\n" +
                         "("+returnAddr+")"; //return address label
 

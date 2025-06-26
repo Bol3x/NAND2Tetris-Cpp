@@ -1,5 +1,5 @@
 #include "..\Parser.cpp"
-#include "HackVM.hpp"
+#include "HackVM.h"
 #include <vector>
 
 class parsing::HackVM::VMParser : public Parser

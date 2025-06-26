@@ -1,4 +1,4 @@
-#include "HackAssembly.hpp"
+#include "HackAssembly.h"
 #include <unordered_map>
 
 class parsing::HackAssembly::SymbolTable{
@@ -54,5 +54,5 @@ class parsing::HackAssembly::SymbolTable{
     private:
         std::unordered_map<String, int> table;
         int instructionAddress = 0;
-        int variableAddress = 0x400;
+        int variableAddress = 16;
 };

@@ -1,6 +1,7 @@
-#include "HackTranslator.hpp"
+#include "HackTranslator.h"
 
-//using namespace std;
+#include <iostream>
+using namespace std;
 
 namespace parsing::HackAssembly
 {
@@ -10,37 +11,40 @@ namespace parsing::HackAssembly
 
     void HackTranslator::generateOpcode()
     {
+
         while (reader.hasMoreCommands())
         {
             reader.advanceLine();
-            //cout << "Next line: ";
+            cout << "Next line:";
             String instruction = reader.getLine();
-            //cout << instruction << endl;
+            cout << instruction << endl;
     
             AssemblyCommand instructionType = reader.getCommandType();
     
             if (instructionType == AssemblyCommand::A_COMMAND)
             {
+                cout << "A_COMMAND" << endl;
                 String address = reader.getSymbol();
 
                 String res = writer.generateAddressBinary(address);
-                //cout << "result: " << res << endl;
+                cout << "result: " << res << endl;
     
                 writer.addLine(res);
             }
     
             if (instructionType == AssemblyCommand::C_COMMAND)
             {
+                cout << "C_COMMAND" << endl;
                 String comp = reader.getComp();
                 String dest = reader.getDest();
                 String jump = reader.getJump();
     
-                //cout << "comp: " << comp << endl;
-                //cout << "dest: " << dest << endl;
-                //cout << "jump: " << jump << endl;
+                cout << "comp: " << comp << endl;
+                cout << "dest: " << dest << endl;
+                cout << "jump: " << jump << endl;
     
                 String res = writer.generateCompBinary(comp, dest, jump);
-                //cout << "result: " << res << endl;
+                cout << "result: " << res << endl;
     
                 writer.addLine(res);
             }
