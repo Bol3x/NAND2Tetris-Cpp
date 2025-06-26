@@ -34,6 +34,8 @@ namespace parsing::JackCompiler
              */
             void advanceToken();
 
+            String getCurrToken();
+
             /**
              * @brief Gets the type of the current token
              * 
