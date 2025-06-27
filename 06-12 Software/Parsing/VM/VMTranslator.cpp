@@ -74,7 +74,9 @@ namespace parsing::HackVM
                     cout << "Function name: " << firstArg << endl;
                     cout << "Num Local vars: " << secondArg << endl;
 
-                    writer.writeFunctionDeclaration(firstArg, secondArg);
+                    writer.writeFunctionDeclaration(firstArg.substr(0, firstArg.find('.')),
+                                                    firstArg.substr(firstArg.find('.')+1), 
+                                                    secondArg);
                     break;
 
                 case VMCommand::VM_CALL:
@@ -84,7 +86,9 @@ namespace parsing::HackVM
                     cout << "Function name: " << firstArg << endl;
                     cout << "Num Arguments: " << secondArg << endl;
 
-                    writer.writeCallInstruction(firstArg, secondArg);
+                    writer.writeCallInstruction(firstArg.substr(0, firstArg.find('.')),
+                                                firstArg.substr(firstArg.find('.')+1), 
+                                                secondArg);
                     break;
 
                 case VMCommand::VM_RETURN:
