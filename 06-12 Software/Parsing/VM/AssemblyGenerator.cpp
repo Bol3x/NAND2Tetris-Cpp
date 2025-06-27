@@ -272,22 +272,20 @@ namespace parsing::HackVM{
         addLine(result);
     }
 
-    void AssemblyGenerator::writeFunctionDeclaration(const String& functionName, const int& nLocals)
+    void AssemblyGenerator::writeFunctionDeclaration(const String& fileName, const String& functionName, const int& nLocals)
     {
-        String result = "";
-        
-        result =        result + "("+VMName+"."+functionName+")\n" +
-                        "@" + std::to_string(nLocals) + "\n" + //move SP +nLocals forward
-                        "D=D+A\n" +
-                        "@SP\n" +
-                        "M=D";
-        
+        String result = "("+fileName+"."+functionName+")";
         addLine(result);
+
+        //push nLocals variables onto stack
+        for (int i = 0; i < nLocals; i++){
+            AssemblyGenerator::writeStackInstruction(VMCommand::VM_PUSH, "constant", 0);
+        }
     }
 
-    void AssemblyGenerator::writeCallInstruction(const String& functionName, const int& nArgs)
+    void AssemblyGenerator::writeCallInstruction(const String& fileName, const String& functionName, const int& nArgs)
     {
-        String returnAddr = VMName+"."+functionName+"$ret."+std::to_string(retIndex);
+        String returnAddr = fileName+"."+functionName+"$ret."+std::to_string(retIndex);
         String result = "";
         
         result =        result + 
@@ -338,7 +336,7 @@ namespace parsing::HackVM{
                         "D=M\n" +
                         "@LCL\n" +
                         "M=D\n" +
-                        "@"+VMName+"."+functionName+"\n" + //jump to the function
+                        "@"+fileName+"."+functionName+"\n" + //jump to the function after preparing the frame
                         "0;JMP\n" +
                         "("+returnAddr+")"; //return address label
 
@@ -349,42 +347,58 @@ namespace parsing::HackVM{
     void AssemblyGenerator::writeReturnInstruction()
     {
         String result = "";
-
-        result =    result + //POP ARG 0
-                    "@SP\n" +
-                    "A=M-1\n" +
+        result =    result +
+                    "@5\n" +    //setup return address' memory location to jump to
+                    "D=A\n" +
+                    "@LCL\n" + 
+                    "A=M\n"
+                    "A=A-D\n" +
                     "D=M\n" +
-                    "@ARG\n" +
-                    "A=M\n" +
-                    "M=D\n" +
-                    "@ARG\n" +    //SP = ARG + 1
+                    "@15\n" +   
+                    "M=D\n";
+        addLine(result);
+
+        //return value goes to top of stack before function call (ie. arg[0])
+        AssemblyGenerator::writeStackInstruction(VMCommand::VM_POP, "argument", 0);
+
+        result = "";
+        result =    result +
+                    "@ARG\n" +  //restore caller frame (SP = ARG+1)
                     "D=M+1\n" +
                     "@SP\n" +
-                    "M=D\n" + //restore caller frame
+                    "M=D\n" +
+                    "@LCL\n" +  //setup pointer value
+                    "A=M\n" +    
+                    "A=A-1\n" +
+                    "D=M\n" +
+                    "@THAT\n" + //(*THAT) = EndOfFrame-1
+                    "M=D\n" +
+                    "@2\n" +    //setup pointer value
+                    "D=A\n" +
                     "@LCL\n" + 
+                    "A=M\n"
+                    "A=A-D\n" +
                     "D=M\n" +
-                    "@5\n" +    //(*THAT) = EndOfFrame-1
-                    "AM=M-1\n" + 
-                    "D=M\n" +
-                    "@THAT\n" +
+                    "@THIS\n" + //(*THIS) = EndOfFrame-2
                     "M=D\n" +
-                    "@5\n" +    //(*THIS) = EndOfFrame-2
-                    "AM=M-1\n" + 
+                    "@3\n" +    //setup pointer value
+                    "D=A\n" +
+                    "@LCL\n" + 
+                    "A=M\n"
+                    "A=A-D\n" +
                     "D=M\n" +
-                    "@THAT\n" +
+                    "@ARG\n" + //(*ARG) = EndOfFrame-3
                     "M=D\n" +
-                    "@5\n" +    //(*ARG) = EndOfFrame-3
-                    "AM=M-1\n" +
+                    "@4\n" +    //setup pointer value
+                    "D=A\n" +
+                    "@LCL\n" + 
+                    "A=M\n" +
+                    "A=A-D\n" +
                     "D=M\n" +
-                    "@ARG\n" +  
-                    "M=D\n"
-                    "@5\n" +    //(*LCL) = EndOfFrame-4
-                    "AM=M-1\n" +
-                    "D=M\n" +
-                    "@LCL\n" +  
+                    "@LCL\n" + //(*LCL) = EndOfFrame-4
                     "M=D\n" +
-                    "@5\n" +   //Return Address (EndOfFrame-5)
-                    "AM=M-1\n" +
+                    "@15\n" +
+                    "A=M\n" +
                     "0;JMP";
 
         addLine(result);

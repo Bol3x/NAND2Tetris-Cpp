@@ -52,10 +52,11 @@ class parsing::HackVM::AssemblyGenerator : public FileGenerator
         /**
          * @brief Writes the equivalent assembly for declaring the function with a set number of local variables allocated
          * 
+         * @param fileName
          * @param functionName 
          * @param nLocals 
         */
-        void writeFunctionDeclaration(const String& functionName, const int& nLocals);
+        void writeFunctionDeclaration(const String& fileName, const String& functionName, const int& nLocals);
 
         /**
          * @brief Writes the equivalent assembly for calling a function with a set number of arguments passed
@@ -63,7 +64,7 @@ class parsing::HackVM::AssemblyGenerator : public FileGenerator
          * @param functionName 
          * @param nArgs 
          */
-        void writeCallInstruction(const String& functionName, const int& nArgs);
+        void writeCallInstruction(const String& fileName, const String& functionName, const int& nArgs);
 
         /**
          * @brief Writes the equivalent assembly for returning a function's result to the caller and handing over program control
