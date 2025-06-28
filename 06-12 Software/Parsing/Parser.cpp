@@ -4,12 +4,6 @@
 #include <regex>
 
 namespace parsing{
-    Parser::Parser(const String& filename) : 
-    currLine("")
-    {
-        inputFile.open(filename);
-    }
-
     Parser::~Parser()
     {
         inputFile.close();
@@ -22,7 +16,10 @@ namespace parsing{
 
     bool Parser::hasMoreCommands()
     {
-        return inputFile.eof() ? false : true;
+        if (inputFile.is_open()){
+            return inputFile.eof() ? false : true;
+        }
+        return false;
     }
 
     void Parser::advanceLine()
@@ -50,6 +47,11 @@ namespace parsing{
             currLine = line;
 
         }while(isInvalidLine);
+    }
+
+    void Parser::openFile(const String& file)
+    {
+        inputFile.open(file);
     }
 
     void Parser::closeFile()

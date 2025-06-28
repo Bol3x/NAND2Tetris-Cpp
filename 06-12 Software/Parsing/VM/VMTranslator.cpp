@@ -5,12 +5,16 @@ using namespace std;
 
 namespace parsing::HackVM
 {
-    VMTranslator::VMTranslator(const String& in, const String& out) :
-    reader(in), writer(out)
+    VMTranslator::VMTranslator(const String& filePath) :
+    writer((filePath+"\\exec.asm"))
     {}
 
-    void VMTranslator::generateAssembly()
+    void VMTranslator::generateAssembly(const String& filePath, const String& fileName)
     {
+        std::cout << filePath+"\\"+fileName+".vm" << std::endl;
+        reader.openFile(filePath+"\\"+fileName+".vm");
+        writer.updateVMName(fileName);
+
         while (reader.hasMoreCommands())
         {
             reader.advanceLine();
@@ -28,7 +32,7 @@ namespace parsing::HackVM
                     cout << "arg: " << firstArg << endl;
                     writer.writeArithmeticInstruction(firstArg);
                     break;
-                
+
                 case VMCommand::VM_POP:
                     cout << "POP" << endl;
                 case VMCommand::VM_PUSH:
@@ -45,7 +49,7 @@ namespace parsing::HackVM
 
                 case VMCommand::VM_LABEL:
                     firstArg = reader.getFirstArg();
-                    
+
                     cout << "Label: " << firstArg << endl;
 
                     writer.writeLabelInstruction(firstArg);
@@ -96,11 +100,15 @@ namespace parsing::HackVM
                     break;
             }
         }
+
+        reader.closeFile();
     }
 
-    void VMTranslator::closeFiles()
-    {
+    void VMTranslator::closeReader(){
         reader.closeFile();
+    }
+
+    void VMTranslator::closeWriter(){
         writer.closeFile();
     }
 }

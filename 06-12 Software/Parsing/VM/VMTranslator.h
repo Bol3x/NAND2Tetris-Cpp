@@ -4,13 +4,15 @@
 class parsing::HackVM::VMTranslator
 {
     public:
-        VMTranslator(const String& in, const String& out);
-        
-        void generateAssembly();
+        VMTranslator(const String& filePath);
 
-        void closeFiles();
+        void generateAssembly(const String& filePath, const String& fileName);
+
+        void closeReader();
+
+        void closeWriter();
 
     private:
-        VMParser reader;
         AssemblyGenerator writer;
+        VMParser reader;
 };

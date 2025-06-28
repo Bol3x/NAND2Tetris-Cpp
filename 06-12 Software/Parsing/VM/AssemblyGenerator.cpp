@@ -254,7 +254,7 @@ namespace parsing::HackVM{
         String result = "";
         
         result =    result + "@"+label+"\n" +
-                    "0;JMP\n";
+                    "0;JMP";
 
         addLine(result);
     }
@@ -355,7 +355,7 @@ namespace parsing::HackVM{
                     "A=A-D\n" +
                     "D=M\n" +
                     "@15\n" +   
-                    "M=D\n";
+                    "M=D";
         addLine(result);
 
         //return value goes to top of stack before function call (ie. arg[0])
@@ -404,4 +404,7 @@ namespace parsing::HackVM{
         addLine(result);
     }
 
+    void AssemblyGenerator::updateVMName(const String& name){
+        VMName = name;
+    }
 }

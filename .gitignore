@@ -4,3 +4,5 @@
 *.hack
 .vscode
 *.exe
+*.tst
+*.cmp

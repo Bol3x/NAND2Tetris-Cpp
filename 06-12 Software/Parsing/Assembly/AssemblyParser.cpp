@@ -2,13 +2,13 @@
 
 namespace parsing::HackAssembly{
 
-    AssemblyParser::AssemblyParser(const String& filename)
-    : Parser(filename),
+    AssemblyParser::AssemblyParser(const String& filename) :
     filename(filename)
     {
+        openFile(filename);
         loadSymbols();
-        inputFile.close();
-        inputFile.open(filename);
+        closeFile();
+        openFile(filename);
     }
 
     AssemblyCommand AssemblyParser::getCommandType()

@@ -3,14 +3,6 @@
 class parsing::Parser{
     public:
 
-        /**
-         * @brief Construct a new Parser object.
-         * 
-         * Opens the input file/stream and gets ready to parse it.
-         * @param filename assembly text filename
-         */
-        Parser(const String& filename);
-
         ~Parser();
 
         /**
@@ -35,6 +27,14 @@ class parsing::Parser{
          */
         void advanceLine();
 
+        
+        /**
+         * @brief Opens a file.
+         * 
+         * @param file 
+         */
+        void openFile(const String& file);
+
         /**
          * @brief Closes inputfile.
          * 
@@ -43,5 +43,5 @@ class parsing::Parser{
     
     protected:
         InputFile inputFile;
-        String currLine;
+        String currLine = "";
 };

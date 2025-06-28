@@ -3,9 +3,6 @@
 
 namespace parsing::HackVM{
 
-    VMParser::VMParser(const String& inputfile) : Parser(inputfile)
-    {}
-
     void VMParser::advanceLine()
     {
         Parser::advanceLine();

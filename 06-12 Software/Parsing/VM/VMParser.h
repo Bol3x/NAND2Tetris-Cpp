@@ -6,13 +6,6 @@ class parsing::HackVM::VMParser : public Parser
 {
     public:
         /**
-         * @brief Initializes the Parser for Virtual Machine Parsing
-         * 
-         * @param filename 
-         */
-        VMParser(const String& filename);
-
-        /**
          * @brief Gets the current line 
          * 
          */

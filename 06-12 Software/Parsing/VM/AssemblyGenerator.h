@@ -72,6 +72,8 @@ class parsing::HackVM::AssemblyGenerator : public FileGenerator
          */
         void writeReturnInstruction();
 
+        void updateVMName(const String& name);
+
     private:
         String VMName;  //filename to identify static variables and function declarations
         int jumpIndex = 0;  //to avoid repeat labels
