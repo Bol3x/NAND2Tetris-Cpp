@@ -11,6 +11,7 @@ namespace parsing::HackAssembly
 
     void HackTranslator::generateOpcode()
     {
+
         while (reader.hasMoreCommands())
         {
             reader.advanceLine();

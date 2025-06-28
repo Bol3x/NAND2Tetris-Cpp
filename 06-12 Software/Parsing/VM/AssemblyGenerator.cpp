@@ -254,7 +254,7 @@ namespace parsing::HackVM{
         String result = "";
         
         result =    result + "@"+label+"\n" +
-                    "0;JMP";
+                    "0;JMP\n";
 
         addLine(result);
     }
