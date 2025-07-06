@@ -92,6 +92,10 @@ namespace parsing::JackCompiler
              */
             void compileExpression();
 
+            /**
+             * @brief Compiles a term
+             * 
+             */
             void compileTerm();
 
             void compileExpressionList();
@@ -100,6 +104,8 @@ namespace parsing::JackCompiler
             void processTerminalReserved(const String& token);
 
             void processTerminalDefined();
+
+            bool expectToken(String target);
 
             Tokenizer tokenizer;
     };

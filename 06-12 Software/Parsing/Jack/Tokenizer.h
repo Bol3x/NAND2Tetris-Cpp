@@ -12,8 +12,15 @@ namespace parsing::JackCompiler
              * 
              * @param filename - file output of the tokenizer
              */
-            Tokenizer(const String& filename);
+            Tokenizer();
 
+            /**
+             * @brief Opens the file to parse tokens from
+             * 
+             * @param filename 
+             */
+            void openFile(const String& filename);
+            
             /**
              * @brief checks if there are remaining tokens in the stream
              * 
@@ -34,6 +41,11 @@ namespace parsing::JackCompiler
              */
             void advanceToken();
 
+            /**
+             * @brief gets the upcoming token to compile
+             * 
+             * @return String 
+             */
             String getCurrToken();
 
             /**

@@ -3,7 +3,6 @@
 namespace parsing::JackCompiler
 {
     Compiler::Compiler(const String& inputFile, const String& outputFile) : 
-    tokenizer(inputFile),
     FileGenerator(outputFile)
     {}
 
@@ -14,15 +13,23 @@ namespace parsing::JackCompiler
         processTerminalReserved("{");
         if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD)
         {
+            //loop to get all class variable definitions
             while (tokenizer.getKeyword() == JackKeyword::JK_FIELD ||
                    tokenizer.getKeyword() == JackKeyword::JK_STATIC)
             {
-                compileClassVariable(); //compile class variables (if any)
+                compileClassVariable();
             }
         }
 
-
-        compileSubroutine();    //compile class methods or functions
+        if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD)
+        {
+            while (tokenizer.getKeyword() == JackKeyword::JK_CONSTRUCTOR ||
+                   tokenizer.getKeyword() == JackKeyword::JK_FUNCTION    ||
+                   tokenizer.getKeyword() == JackKeyword::JK_METHOD)
+                {
+                    compileSubroutine();    //compile class methods or functions
+                }
+        }
         processTerminalReserved("}");
         addLine("</class>");
     }
@@ -32,7 +39,7 @@ namespace parsing::JackCompiler
         addLine("<classVarDec>");
         processTerminalReserved(tokenizer.getCurrToken()); //the field/static keyword
         processTerminalReserved(tokenizer.getCurrToken()); //the datatype keyword
-        //loop for as many variables possibly declared in the same line
+        //loop for as many variables possibly declared
         do{
             processTerminalDefined();   //varName
             token = tokenizer.getCurrToken();   //',' or ';'
@@ -43,9 +50,42 @@ namespace parsing::JackCompiler
 
     void Compiler::compileSubroutine(){
         addLine("<subroutineDec>");
-        processTerminalReserved(tokenizer.getCurrToken()); //the type of subroutine
-        processTerminalReserved(tokenizer.getCurrToken()); //the datatype keyword
-        processTerminalDefined();   //identifier
+        if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD)
+        {
+            switch(tokenizer.getKeyword()){
+                case JackKeyword::JK_CONSTRUCTOR:
+                    processTerminalReserved("constructor");
+                    break;
+                case JackKeyword::JK_FUNCTION:
+                    processTerminalReserved("function");
+                    break;
+                case JackKeyword::JK_METHOD:
+                    processTerminalReserved("method");
+            }
+        }
+
+        if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD)
+        {
+            switch(tokenizer.getKeyword()){
+                case JackKeyword::JK_VOID:
+                    processTerminalReserved("void");
+                    break;
+                case JackKeyword::JK_INT:
+                    processTerminalReserved("int");
+                    break;
+                case JackKeyword::JK_BOOLEAN:
+                    processTerminalReserved("boolean");
+                    break;
+                case JackKeyword::JK_CHAR:
+                    processTerminalReserved("char");
+            }
+        }
+        else
+        {
+            processTerminalReserved(tokenizer.getCurrToken()); //a user-defined class
+        }
+
+        processTerminalDefined();   //subroutine identifier
         processTerminalReserved("(");
         compileParameters();
         processTerminalReserved(")");
@@ -54,59 +94,285 @@ namespace parsing::JackCompiler
     }
 
     void Compiler::compileParameters(){
-        addLine("<parameterList");
+        addLine("<parameterList>");
+        String token;
+        do{
+            if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD)
+            {
+                switch(tokenizer.getKeyword()){
+                    case JackKeyword::JK_INT:
+                        processTerminalReserved("int");
+                        break;
+                    case JackKeyword::JK_BOOLEAN:
+                        processTerminalReserved("boolean");
+                        break;
+                    case JackKeyword::JK_CHAR:
+                        processTerminalReserved("char");
+                }
+            }
+            else
+            {
+                processTerminalReserved(tokenizer.getCurrToken()); //a user-defined class
+            }
 
-        addLine("</parameterList");
+            processTerminalDefined();   //varName
+            token = tokenizer.getCurrToken();   //',' or ';'
+            processTerminalReserved(token);
+        } while (token == ",");
+        addLine("</parameterList>");
     }
 
     void Compiler::compileSubroutineBody(){
         addLine("<subroutineBody>");
+        processTerminalReserved("{");
 
+        //variable declarations
+        while (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD && tokenizer.getKeyword() == JackKeyword::JK_VAR)
+        {
+            compileVarDeclaration();
+        }
+
+        //statements
+        compileStatements();
+        processTerminalReserved("}");
         addLine("</subroutineBody>");
     }
 
     void Compiler::compileVarDeclaration(){
         addLine("<varDec>");
+        processTerminalReserved("var");
 
+        switch(tokenizer.getKeyword()){
+            case JackKeyword::JK_INT:
+                processTerminalReserved("int");
+                break;
+            case JackKeyword::JK_BOOLEAN:
+                processTerminalReserved("boolean");
+                break;
+            case JackKeyword::JK_CHAR:
+                processTerminalReserved("char");
+                break;
+
+            default:
+                processTerminalDefined(); //class name
+        }
+
+        String token;
+        do{
+            processTerminalDefined();   //varName
+            token = tokenizer.getCurrToken();   //',' or ';'
+            processTerminalReserved(token);
+        } while(token == ",");
+        
         addLine("</varDec>");
     }
 
     void Compiler::compileStatements(){
         addLine("<statements>");
+        JackKeyword keyword = tokenizer.getKeyword();
+        while (keyword == JackKeyword::JK_LET || keyword == JackKeyword::JK_IF || keyword == JackKeyword::JK_WHILE ||
+              keyword == JackKeyword::JK_DO || keyword == JackKeyword::JK_RETURN){
+                switch (keyword)
+                {
+                case JackKeyword::JK_LET:
+                    compileLet();
+                    break;
 
+                case JackKeyword::JK_IF:
+                    compileIf();
+                    break;
+                
+                case JackKeyword::JK_WHILE:
+                    compileWhile();
+                    break;
+
+                case JackKeyword::JK_DO:
+                    compileDo();
+                    break;
+
+                case JackKeyword::JK_RETURN:
+                    compileReturn();
+                    break;
+
+                default:
+                    throw "Invalid statements!";
+
+                }
+                keyword = tokenizer.getKeyword();
+        }
         addLine("</statements>");
     }
 
     void Compiler::compileLet(){
-        
+        addLine("<LetStatement>");
+        processTerminalReserved("let");
+        processTerminalDefined();
+        //look ahead if a array definition
+        if (tokenizer.getCurrToken() == "["){
+            processTerminalReserved("[");
+            compileExpression();
+            processTerminalReserved("]");
+        }
+        processTerminalReserved("=");
+        compileExpression();
+        processTerminalReserved(";");
+        addLine("</LetStatement>");
     }
 
     void Compiler::compileIf(){
-
+        addLine("<ifStatement>");
+        processTerminalReserved("if");
+        processTerminalReserved("(");
+        compileExpression();
+        processTerminalReserved(")");
+        processTerminalReserved("{");
+        compileStatements();
+        processTerminalReserved("}");
+        //look ahead for else
+        if (tokenizer.getCurrToken() == "else"){
+            processTerminalReserved("else");
+            processTerminalReserved("{");
+            compileExpression();
+            processTerminalReserved("}");
+        }
+        processTerminalReserved(";");
+        addLine("</ifStatement>");
     }
 
     void Compiler::compileWhile(){
-
+        addLine("<whileStatement>");
+        processTerminalReserved("while");
+        processTerminalReserved("(");
+        compileExpression();
+        processTerminalReserved(")");
+        processTerminalReserved("{");
+        compileStatements();
+        processTerminalReserved("}");
+        processTerminalReserved(";");
+        addLine("</whileStatement>");
     }
 
     void Compiler::compileDo(){
-
+        addLine("<doStatement>");
+        processTerminalReserved("do");
+        //subroutine call
+        processTerminalDefined();
+        //loop through possibly nested object attributes
+        while (tokenizer.getCurrToken() == "."){
+            processTerminalReserved(".");
+            processTerminalDefined();
+        }
+        processTerminalReserved("(");
+        compileExpressionList();
+        processTerminalReserved(")");
+        //end of subroutine call
+        processTerminalReserved(";");
+        addLine("</doStatement>");
     }
 
     void Compiler::compileReturn(){
-
+        addLine("<returnStatement>");
+        processTerminalReserved("return");
+        compileExpression();
+        processTerminalReserved(";");
+        addLine("</returnStatement>");
     }
 
-    void compileExpression(){
-
+    void Compiler::compileExpression(){
+        //todo: use a modified recursive descent parser to make use of the operator precedence
+        //check RDP.cpp for the general idea of using trees to generate the order
+        addLine("<expression>");
+        compileTerm();
+        char op = tokenizer.getCurrToken()[0];
+        while (operators.find(op) != operators.end())
+        {
+            processTerminalReserved(std::to_string(op));
+            compileTerm();
+        }
+        addLine("</expression>");
     }
 
-    void compileTerm(){
+    void Compiler::compileTerm(){
+        addLine("<term>");
+        switch(tokenizer.getTokenType())
+        {
+            case JackTokenType::JT_INT_CONST:
+            case JackTokenType::JT_STR_CONST:
+                processTerminalDefined();
+                break;
 
+            case JackTokenType::JT_KEYWORD:
+                if (tokenizer.getKeyword() == JackKeyword::JK_TRUE)
+                {
+                    processTerminalReserved("true");
+                }
+                else if (tokenizer.getKeyword() == JackKeyword::JK_FALSE)
+                {
+                    processTerminalReserved("false");
+                }
+                else if (tokenizer.getKeyword() == JackKeyword::JK_NULL)
+                {
+                    processTerminalReserved("null");
+                }
+                else if (tokenizer.getKeyword() == JackKeyword::JK_THIS)
+                {
+                    processTerminalReserved("this");
+                }
+                break;
+
+            case JackTokenType::JT_IDENTIFIER:
+                processTerminalDefined();
+                //can be an array
+                if (tokenizer.getCurrToken() == "[")
+                {
+                    processTerminalReserved("[");
+                    compileExpression();
+                    processTerminalReserved("]");
+                }
+                //can be a subroutine call
+                else 
+                { 
+                    //can also be in a nested object
+                    while (tokenizer.getCurrToken() == "."){
+                        processTerminalReserved(".");
+                        processTerminalDefined();
+                    }
+
+                    if (tokenizer.getCurrToken() == "("){
+                        processTerminalReserved("(");
+                        compileExpressionList();
+                        processTerminalReserved(")");
+                    }
+                }
+                break;
+
+            case JackTokenType::JT_SYMBOL:
+                if (tokenizer.getCurrToken() == "~")
+                {
+                    processTerminalReserved("~");
+                    //compileExpression() should (supposedly) handle these symbols, as well as operator precedence involving unary operators
+                    compileTerm();
+                }
+                else if (tokenizer.getCurrToken() == "-")
+                {
+                    processTerminalReserved("-");
+                    compileTerm();
+                }
+                else if (tokenizer.getCurrToken() == "(")
+                {
+                    processTerminalReserved("(");
+                    compileExpression();
+                    processTerminalReserved(")");
+                }
+                break;
+        }
+        addLine("</term>");
     }
 
-    void compileExpressionList(){
-
+    void Compiler::compileExpressionList(){
+        addLine("<expressionList>");
+        
+        addLine("</expressionList>");
     }
 
     void Compiler::processTerminalReserved(const String& token){
@@ -121,8 +387,8 @@ namespace parsing::JackCompiler
                     break;
             }
         } else {
-            //todo: error
-            addLine("SYNTAX ERROR");
+            //todo: error handler
+            throw "Invalid syntax! Expected " + token + +", read " + currToken;
         }
         tokenizer.advanceToken();
     }
@@ -134,11 +400,11 @@ namespace parsing::JackCompiler
                 addLine("<identifier>"+currToken+"</identifier>");
                 break;
             case JackTokenType::JT_INT_CONST:
-                addLine("<integerLiteral>"+currToken+"</integerLiteral>");
-                break;
             case JackTokenType::JT_STR_CONST:
-                addLine("<stringLiteral>"+currToken+"</stringLiteral>");
+                addLine("<constant>"+currToken+"</constant>");
                 break;
+            default:
+                throw "Cannot process user-defined terminal!";
         }
         tokenizer.advanceToken();
     }

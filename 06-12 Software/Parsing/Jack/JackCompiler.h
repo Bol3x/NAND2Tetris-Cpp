@@ -1,11 +1,16 @@
 #pragma once
 
 #include "../Parsing.h"
+#include "../FileGenerator.h"
 #include <unordered_map>
 #include <unordered_set>
 
 namespace parsing::JackCompiler
 {
+
+    const int MAX_INT_VALUE = 0x7FFF; //32767, last bit for negative
+    const int MIN_INT_VALUE = 0;
+
     enum class JackTokenType
     {
         JT_KEYWORD,
@@ -58,7 +63,24 @@ namespace parsing::JackCompiler
         '{', '}', '(', ')', '[', ']', '.', ',', ';', '+', '-', '*', '/', '&', '|', '<', '>', '=', '~'
     };
 
+    const std::unordered_set<char> operators = {
+        '+', '-', '*', '/', '&', '|', '<', '>', '=', '~'
+    };
+    
+    const std::unordered_map<char, int> operatorPrec = {
+        {'*', 5}, {'/', 5},
+        {'+', 4}, {'-', 4},
+        {'<', 3}, {'>', 3},
+        {'=', 2},
+        {'&', 1},
+        {'|', 0}
+    };
+
 
     class Tokenizer;
     class Compiler;
+
+    //recursive descent parsing classes
+    class TreeNode;
+    class ExpressionNode;
 }

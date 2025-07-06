@@ -2,8 +2,7 @@
 
 namespace parsing::JackCompiler
 {
-    Tokenizer::Tokenizer(const String& filename) :
-    Parser(filename)
+    Tokenizer::Tokenizer()
     {}
 
     bool Tokenizer::hasMoreTokens()
