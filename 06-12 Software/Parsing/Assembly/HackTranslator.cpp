@@ -5,9 +5,11 @@ using namespace std;
 
 namespace parsing::HackAssembly
 {
-    HackTranslator::HackTranslator(const String& in, const String& out) :
-    reader(in), writer(out)
-    {}
+    HackTranslator::HackTranslator(const String& in, const String& out)
+    {
+        reader.openFile(in);
+        writer.openFile(out);
+    }
 
     void HackTranslator::generateOpcode()
     {

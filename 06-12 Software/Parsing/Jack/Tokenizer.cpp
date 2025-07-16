@@ -2,12 +2,9 @@
 
 namespace parsing::JackCompiler
 {
-    Tokenizer::Tokenizer()
-    {}
-
     bool Tokenizer::hasMoreTokens()
     {
-        if (! tokens.size())
+        if (tokens.size() == 0)
         {
             return false;
         }
@@ -33,7 +30,7 @@ namespace parsing::JackCompiler
                 }
 
                 //if it is a multi-line or API comment
-                if (i+1 < currLine.length() && currLine[i+1] == '*'){
+                else if (i+1 < currLine.length() && currLine[i+1] == '*'){
                     auto currLineIt = currLine.find("*/");
 
                     //find the end of the multi-line comment
@@ -48,15 +45,20 @@ namespace parsing::JackCompiler
                         i = newPos;
                     }
                 }
+
+                //otherwise it's a normal divide symbol
+                else {
+                    tokens.push(String(1,ch));
+                }
             }
 
             //seperate loop to complete a string constant
             //to avoid early stopping from strings with symbols inside
             else if (ch == '\"'){
-                token += ch;
+                token.push_back(ch);
                 for (int j = i+1; j < currLine.length(); j++){
                     ch = currLine[j];
-                    token += ch;
+                    token.push_back(ch);
                     if (ch == '\"'){
                         i = j;
                         break;
@@ -64,14 +66,18 @@ namespace parsing::JackCompiler
 
                     //todo: throw error if end quote is not found in line
                 }
-                tokens.push(token);
+                if (token.length() > 0)
+                {
+                    tokens.push(token);
+                    token.clear();
+                }
             } 
 
             //terminates tokens by detecting symbols and whitespaces
-            else if (ch == ' ' || symbols.find(ch) != symbols.end()){
-                if (token.length()){
+            else if (ch == '\t' || ch == ' ' || symbols.find(ch) != symbols.end()){
+                if (token.length() > 0){
                     tokens.push(token);
-                    token = "";
+                    token.clear();
                 }
                 
                 //still pass the symbol as a token
@@ -79,7 +85,7 @@ namespace parsing::JackCompiler
                     tokens.push(String(1, ch));
                 }
             } else {
-                token += ch;
+                token.push_back(ch);
             }
         }
     }
@@ -94,10 +100,11 @@ namespace parsing::JackCompiler
         if (hasMoreTokens()){
             currToken = tokens.front();
             tokens.pop();
+            std::cout << "current token: " << currToken << std::endl;
             return;
         }
 
-        currToken = "";
+        currToken.clear();
     }
 
     String Tokenizer::getCurrToken(){
@@ -138,8 +145,8 @@ namespace parsing::JackCompiler
         try {
             int result = std::stoi(currToken);
             //0 to 
-            if (result >= 0 || result < 0x10000){
-                return JackTokenType::JT_KEYWORD;
+            if (result >= 0 && result < 0x10000){
+                return JackTokenType::JT_INT_CONST;
             } else {
                 return JackTokenType::JT_INVALID;
             }

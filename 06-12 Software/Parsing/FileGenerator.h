@@ -5,13 +5,11 @@
 class parsing::FileGenerator
 {
     public:
-        /**
-         * @brief Constructor for a FileGenerator object, outputting lines to the given filename
-         * 
-         * @param filename
-         */
-        FileGenerator(const String& filename);
 
+        /**
+         * @brief Ensure that the file opened is closed if the object is destroyed
+         * 
+         */
         ~FileGenerator();
 
         /**
@@ -20,6 +18,14 @@ class parsing::FileGenerator
          * @param features - binary of command
          */
         void addLine(const String& binary);
+
+        /**
+         * @brief Opens/Creates a new file to output to
+         * 
+         * Make sure that there is no current file still open
+         * 
+         */
+        void openFile(const String& filename);
 
         /**
          * @brief Closes outputfile.

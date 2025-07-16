@@ -4,10 +4,6 @@
 
 namespace parsing
 {
-    FileGenerator::FileGenerator(const String& filename)
-    {
-        outputFile.open(filename, std::ios::out);
-    }
 
     FileGenerator::~FileGenerator()
     {
@@ -30,6 +26,15 @@ namespace parsing
             }
             */
         }
+    }
+
+    void FileGenerator::openFile(const String& file)
+    {
+        if (outputFile.is_open())
+        {
+            closeFile();
+        }
+        outputFile.open(file, std::ios::out);
     }
 
     void FileGenerator::closeFile()

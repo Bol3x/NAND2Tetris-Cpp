@@ -51,6 +51,10 @@ namespace parsing{
 
     void Parser::openFile(const String& file)
     {
+        if (inputFile.is_open())
+        {
+            inputFile.close();
+        }
         inputFile.open(file);
     }
 

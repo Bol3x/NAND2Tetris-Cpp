@@ -2,34 +2,55 @@
 
 namespace parsing::JackCompiler
 {
-    Compiler::Compiler(const String& inputFile, const String& outputFile) : 
-    FileGenerator(outputFile)
-    {}
 
-    void Compiler::compileClass(){
+    void Compiler::compileFile(const String& in)
+    {
+        tokenizer.openFile(in);
+
+        while (tokenizer.hasMoreTokens() || tokenizer.hasMoreCommands())
+        {
+            if (tokenizer.hasMoreTokens())
+            {
+                if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD && tokenizer.getKeyword() == JackKeyword::JK_CLASS)
+                {
+                    compileClass();
+                }
+                else 
+                {
+                    //fallback if token is not a part of a class
+                    tokenizer.advanceToken();
+                }
+            }
+            else
+            {
+                tokenizer.advanceToken();
+            }
+        }
+    }
+
+    void Compiler::compileClass()
+    {
         addLine("<class>");
         processTerminalReserved("class");
         processTerminalDefined();       //class name
         processTerminalReserved("{");
-        if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD)
-        {
-            //loop to get all class variable definitions
-            while (tokenizer.getKeyword() == JackKeyword::JK_FIELD ||
-                   tokenizer.getKeyword() == JackKeyword::JK_STATIC)
-            {
-                compileClassVariable();
-            }
-        }
 
-        if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD)
+        //loop to get all class variable definitions
+        while (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD && 
+              (tokenizer.getKeyword() == JackKeyword::JK_FIELD ||
+               tokenizer.getKeyword() == JackKeyword::JK_STATIC))
         {
-            while (tokenizer.getKeyword() == JackKeyword::JK_CONSTRUCTOR ||
-                   tokenizer.getKeyword() == JackKeyword::JK_FUNCTION    ||
-                   tokenizer.getKeyword() == JackKeyword::JK_METHOD)
-                {
-                    compileSubroutine();    //compile class methods or functions
-                }
+            compileClassVariable();
         }
+        
+        //loop to get all subroutine declarations in the class
+        while (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD && 
+              (tokenizer.getKeyword() == JackKeyword::JK_CONSTRUCTOR ||
+               tokenizer.getKeyword() == JackKeyword::JK_FUNCTION    ||
+               tokenizer.getKeyword() == JackKeyword::JK_METHOD))
+            {
+                compileSubroutine();    //compile class methods or functions
+            }
         processTerminalReserved("}");
         addLine("</class>");
     }
@@ -95,30 +116,37 @@ namespace parsing::JackCompiler
 
     void Compiler::compileParameters(){
         addLine("<parameterList>");
-        String token;
-        do{
-            if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD)
-            {
-                switch(tokenizer.getKeyword()){
-                    case JackKeyword::JK_INT:
-                        processTerminalReserved("int");
-                        break;
-                    case JackKeyword::JK_BOOLEAN:
-                        processTerminalReserved("boolean");
-                        break;
-                    case JackKeyword::JK_CHAR:
-                        processTerminalReserved("char");
-                }
-            }
-            else
-            {
-                processTerminalReserved(tokenizer.getCurrToken()); //a user-defined class
-            }
 
-            processTerminalDefined();   //varName
-            token = tokenizer.getCurrToken();   //',' or ';'
-            processTerminalReserved(token);
-        } while (token == ",");
+        if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD){
+            //process any more parameter definitions
+            char symbol;
+            do{
+                if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD)
+                {
+                    switch(tokenizer.getKeyword()){
+                        case JackKeyword::JK_INT:
+                            processTerminalReserved("int");
+                            break;
+                        case JackKeyword::JK_BOOLEAN:
+                            processTerminalReserved("boolean");
+                            break;
+                        case JackKeyword::JK_CHAR:
+                            processTerminalReserved("char");
+                    }
+                }
+                else
+                {
+                    processTerminalReserved(tokenizer.getCurrToken()); //a user-defined class
+                }
+
+                processTerminalDefined();   //varName
+                symbol = tokenizer.getSymbol();
+                if (symbol != ')'){
+                    processTerminalReserved(String(1, symbol));
+                }
+            } while (tokenizer.getTokenType() == JackTokenType::JT_SYMBOL && tokenizer.getSymbol() == ',');
+        }
+
         addLine("</parameterList>");
     }
 
@@ -142,19 +170,25 @@ namespace parsing::JackCompiler
         addLine("<varDec>");
         processTerminalReserved("var");
 
-        switch(tokenizer.getKeyword()){
-            case JackKeyword::JK_INT:
-                processTerminalReserved("int");
-                break;
-            case JackKeyword::JK_BOOLEAN:
-                processTerminalReserved("boolean");
-                break;
-            case JackKeyword::JK_CHAR:
-                processTerminalReserved("char");
-                break;
-
-            default:
-                processTerminalDefined(); //class name
+        //if token is a keyword (ie. defined types)
+        if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD)
+        {
+            switch(tokenizer.getKeyword()){
+                case JackKeyword::JK_INT:
+                    processTerminalReserved("int");
+                    break;
+                case JackKeyword::JK_BOOLEAN:
+                    processTerminalReserved("boolean");
+                    break;
+                case JackKeyword::JK_CHAR:
+                    processTerminalReserved("char");
+                    break;
+            }
+        }
+        //if token refers to a class object
+        else 
+        {
+            processTerminalDefined();
         }
 
         String token;
@@ -169,36 +203,39 @@ namespace parsing::JackCompiler
 
     void Compiler::compileStatements(){
         addLine("<statements>");
-        JackKeyword keyword = tokenizer.getKeyword();
-        while (keyword == JackKeyword::JK_LET || keyword == JackKeyword::JK_IF || keyword == JackKeyword::JK_WHILE ||
-              keyword == JackKeyword::JK_DO || keyword == JackKeyword::JK_RETURN){
-                switch (keyword)
-                {
-                case JackKeyword::JK_LET:
-                    compileLet();
-                    break;
+        JackKeyword keyword;
+            keyword = tokenizer.getKeyword();
+            while (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD && (keyword == JackKeyword::JK_LET || keyword == JackKeyword::JK_IF || keyword == JackKeyword::JK_WHILE ||
+                  keyword == JackKeyword::JK_DO || keyword == JackKeyword::JK_RETURN)){
+                    switch (keyword)
+                    {
+                    case JackKeyword::JK_LET:
+                        compileLet();
+                        break;
 
-                case JackKeyword::JK_IF:
-                    compileIf();
-                    break;
-                
-                case JackKeyword::JK_WHILE:
-                    compileWhile();
-                    break;
+                    case JackKeyword::JK_IF:
+                        compileIf();
+                        break;
+                    
+                    case JackKeyword::JK_WHILE:
+                        compileWhile();
+                        break;
 
-                case JackKeyword::JK_DO:
-                    compileDo();
-                    break;
+                    case JackKeyword::JK_DO:
+                        compileDo();
+                        break;
 
-                case JackKeyword::JK_RETURN:
-                    compileReturn();
-                    break;
+                    case JackKeyword::JK_RETURN:
+                        compileReturn();
+                        break;
 
-                default:
-                    throw "Invalid statements!";
+                    default:
+                        throw "Invalid statements!";
 
-                }
-                keyword = tokenizer.getKeyword();
+                    }
+                    if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD){
+                        keyword = tokenizer.getKeyword();
+                    }
         }
         addLine("</statements>");
     }
@@ -248,7 +285,6 @@ namespace parsing::JackCompiler
         processTerminalReserved("{");
         compileStatements();
         processTerminalReserved("}");
-        processTerminalReserved(";");
         addLine("</whileStatement>");
     }
 
@@ -286,8 +322,10 @@ namespace parsing::JackCompiler
         char op = tokenizer.getCurrToken()[0];
         while (operators.find(op) != operators.end())
         {
-            processTerminalReserved(std::to_string(op));
+            processTerminalReserved(String(1, op));
             compileTerm();
+
+            op = tokenizer.getCurrToken()[0];
         }
         addLine("</expression>");
     }
@@ -371,7 +409,16 @@ namespace parsing::JackCompiler
 
     void Compiler::compileExpressionList(){
         addLine("<expressionList>");
-        
+        //check if next token is the closing parenthesis, which corresponds to an empty expressionList
+        if (! (tokenizer.getCurrToken() == ")") )
+        {
+            compileExpression();
+            while (tokenizer.getCurrToken() == ",")
+            {
+                processTerminalReserved(",");
+                compileExpression();
+            }
+        }
         addLine("</expressionList>");
     }
 

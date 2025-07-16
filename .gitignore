@@ -6,3 +6,5 @@
 *.exe
 *.tst
 *.cmp
+*.jack
+*.xml

@@ -1,18 +1,19 @@
 #include "JackCompiler.h"
 #include "Tokenizer.cpp"
-#include "FileGenerator.cpp"
+#include "../FileGenerator.cpp"
 
 namespace parsing::JackCompiler
 {
     class Compiler : public FileGenerator
     {
         public:
+
             /**
-             * @brief Creates a new Compiler object to produce VM instructions
+             * @brief Compiles the file from the first to last token detected
              * 
-             * @param filename - file output of the compiler
+             * @param in - input filename or path
              */
-            Compiler(const String& inputFile, const String& outputFile);
+            void compileFile(const String& in);
 
             /**
              * @brief generates VM instructions for a class declaration.
@@ -104,8 +105,6 @@ namespace parsing::JackCompiler
             void processTerminalReserved(const String& token);
 
             void processTerminalDefined();
-
-            bool expectToken(String target);
 
             Tokenizer tokenizer;
     };

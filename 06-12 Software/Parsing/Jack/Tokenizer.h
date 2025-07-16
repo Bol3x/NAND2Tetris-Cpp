@@ -8,20 +8,6 @@ namespace parsing::JackCompiler
     {
         public:
             /**
-             * @brief Creates a new compiler object to parse the Jack langauge
-             * 
-             * @param filename - file output of the tokenizer
-             */
-            Tokenizer();
-
-            /**
-             * @brief Opens the file to parse tokens from
-             * 
-             * @param filename 
-             */
-            void openFile(const String& filename);
-            
-            /**
              * @brief checks if there are remaining tokens in the stream
              * 
              */
