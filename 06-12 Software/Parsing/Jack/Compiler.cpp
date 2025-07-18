@@ -144,7 +144,7 @@ namespace parsing::JackCompiler
                 if (symbol != ')'){
                     processTerminalReserved(String(1, symbol));
                 }
-            } while (tokenizer.getTokenType() == JackTokenType::JT_SYMBOL && tokenizer.getSymbol() == ',');
+            } while (symbol == ',');
         }
 
         addLine("</parameterList>");
@@ -204,38 +204,37 @@ namespace parsing::JackCompiler
     void Compiler::compileStatements(){
         addLine("<statements>");
         JackKeyword keyword;
-            keyword = tokenizer.getKeyword();
-            while (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD && (keyword == JackKeyword::JK_LET || keyword == JackKeyword::JK_IF || keyword == JackKeyword::JK_WHILE ||
-                  keyword == JackKeyword::JK_DO || keyword == JackKeyword::JK_RETURN)){
-                    switch (keyword)
-                    {
-                    case JackKeyword::JK_LET:
-                        compileLet();
-                        break;
+            while (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD){
+                keyword = tokenizer.getKeyword();
+                switch (keyword)
+                {
+                case JackKeyword::JK_LET:
+                    compileLet();
+                    break;
 
-                    case JackKeyword::JK_IF:
-                        compileIf();
-                        break;
-                    
-                    case JackKeyword::JK_WHILE:
-                        compileWhile();
-                        break;
+                case JackKeyword::JK_IF:
+                    compileIf();
+                    break;
+                
+                case JackKeyword::JK_WHILE:
+                    compileWhile();
+                    break;
 
-                    case JackKeyword::JK_DO:
-                        compileDo();
-                        break;
+                case JackKeyword::JK_DO:
+                    compileDo();
+                    break;
 
-                    case JackKeyword::JK_RETURN:
-                        compileReturn();
-                        break;
+                case JackKeyword::JK_RETURN:
+                    compileReturn();
+                    break;
 
-                    default:
-                        throw "Invalid statements!";
+                default:
+                    throw "Invalid statements!";
 
-                    }
-                    if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD){
-                        keyword = tokenizer.getKeyword();
-                    }
+                }
+                if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD){
+                    keyword = tokenizer.getKeyword();
+                }
         }
         addLine("</statements>");
     }
@@ -269,10 +268,9 @@ namespace parsing::JackCompiler
         if (tokenizer.getCurrToken() == "else"){
             processTerminalReserved("else");
             processTerminalReserved("{");
-            compileExpression();
+            compileStatements();
             processTerminalReserved("}");
         }
-        processTerminalReserved(";");
         addLine("</ifStatement>");
     }
 
@@ -435,6 +433,7 @@ namespace parsing::JackCompiler
             }
         } else {
             //todo: error handler
+            //std::cout << "Invalid syntax! Expected " + token + +", read " + currToken << std::endl;
             throw "Invalid syntax! Expected " + token + +", read " + currToken;
         }
         tokenizer.advanceToken();
@@ -451,6 +450,7 @@ namespace parsing::JackCompiler
                 addLine("<constant>"+currToken+"</constant>");
                 break;
             default:
+                //std::cout << "Cannot process user-defined terminal!" << std::endl;
                 throw "Cannot process user-defined terminal!";
         }
         tokenizer.advanceToken();

@@ -32,7 +32,9 @@ namespace parsing::HackAssembly
                 {"JLE", "110"},
                 {"JMP", "111"}
             })
-            {}
+        {
+            openFile(filename);
+        }
 
         String BinaryGenerator::generateCompBinary(const String& comp, const String& dest, const String& jump)
         {

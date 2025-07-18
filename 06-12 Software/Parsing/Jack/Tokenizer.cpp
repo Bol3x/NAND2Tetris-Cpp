@@ -18,6 +18,7 @@ namespace parsing::JackCompiler
         //repeat until end of currLine
         //this way all tokens can be extracted from the string before any operation is done on the current line of tokens
         String token = "";
+        
         for (int i = 0; i < currLine.length(); i++){
             char ch = currLine[i];
 
@@ -25,7 +26,7 @@ namespace parsing::JackCompiler
             if (ch == '/')
             {
                 //ignore the rest of the line
-                if (i+1 < currLine.length() && currLine[i+1] == '/'){
+                if (i+1 < currLine.length() && currLine[i+1] == '/' && tokens.size() > 0){
                     return;
                 }
 
@@ -49,6 +50,13 @@ namespace parsing::JackCompiler
                 //otherwise it's a normal divide symbol
                 else {
                     tokens.push(String(1,ch));
+                }
+
+                //ensure that tokens are trying to be grabbed still
+                //if the comment results in no tokens, keep trying the next line
+                if (tokens.size() == 0 && hasMoreCommands()){
+                    Parser::advanceLine();
+                    i = -1;
                 }
             }
 
@@ -100,7 +108,7 @@ namespace parsing::JackCompiler
         if (hasMoreTokens()){
             currToken = tokens.front();
             tokens.pop();
-            std::cout << "current token: " << currToken << std::endl;
+            //std::cout << "current token: " << currToken << std::endl;
             return;
         }
 

@@ -29,6 +29,7 @@ int main()
     {
         if (!tokenizer.hasMoreTokens())
         {
+            std::cout << "tokens queue is empty!" << std::endl;
             tokenizer.advanceToken();
         }
         else
