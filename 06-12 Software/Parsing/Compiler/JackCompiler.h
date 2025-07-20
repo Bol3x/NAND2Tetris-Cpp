@@ -9,7 +9,6 @@ namespace parsing::JackCompiler
 {
 
     const int MAX_INT_VALUE = 0x7FFF; //32767, last bit for negative
-    const int MIN_INT_VALUE = 0;
 
     enum class JackTokenType
     {
@@ -76,11 +75,48 @@ namespace parsing::JackCompiler
         {'|', 0}
     };
 
+    enum class JackCompilerType
+    {
+        JC_STATIC,
+        JC_FIELD,
+        JC_ARG,
+        JC_VAR,
+        JC_NONE
+    };
+
+    enum class JackVMSegment
+    {
+        JVT_CONSTANT,
+        JVT_ARGUMENT,
+        JVT_LOCAL,
+        JVT_STATIC,
+        JVT_THIS,
+        JVT_THAT,
+        JVT_POINTER,
+        JVT_TEMP
+    };
+
+    enum class JackVMCommand
+    {
+        JVC_ADD,
+        JVC_SUB,
+        JVC_NEG,
+        JVC_EQ,
+        JVC_GT,
+        JVC_LT,
+        JVC_AND,
+        JVC_OR,
+        JVC_NOT
+    };
+
+    typedef struct symbol_data_t {
+        int index;
+        String datatype;
+        JackCompilerType kind;
+    } symbolData;
 
     class Tokenizer;
-    class Compiler;
-
-    //recursive descent parsing classes
-    class TreeNode;
-    class ExpressionNode;
+    class CompilerEngine;
+    class CompilerSymbolTable;
+    class VMWriter;
 }

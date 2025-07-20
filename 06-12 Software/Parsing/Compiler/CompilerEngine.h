@@ -4,7 +4,7 @@
 
 namespace parsing::JackCompiler
 {
-    class Compiler : public FileGenerator
+    class CompilerEngine : public FileGenerator
     {
         public:
 

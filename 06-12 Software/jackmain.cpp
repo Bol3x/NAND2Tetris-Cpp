@@ -2,7 +2,7 @@
 #include <filesystem>
 #include <vector>
 
-#include "Parsing/Jack/Compiler.cpp"
+#include "Parsing/Jack/CompilerEngine.cpp"
 
 using namespace parsing;
 using namespace std;
@@ -43,16 +43,16 @@ int main()
     tokenizer.closeFile();
     */
 
-    JackCompiler::Compiler compiler;
+    JackCompiler::CompilerEngine engine;
 
     fs::path fileXML = filePath;
     fileXML.replace_extension("xml");
 
-    compiler.openFile(fileXML.string());
+    engine.openFile(fileXML.string());
 
-    compiler.compileFile(filePath.string());
+    engine.compileFile(filePath.string());
 
-    compiler.closeFile();
+    engine.closeFile();
     
     return 0;
 }

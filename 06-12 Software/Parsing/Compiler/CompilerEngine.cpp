@@ -1,9 +1,9 @@
-#include "Compiler.h"
+#include "CompilerEngine.h"
 
 namespace parsing::JackCompiler
 {
 
-    void Compiler::compileFile(const String& in)
+    void CompilerEngine::compileFile(const String& in)
     {
         tokenizer.openFile(in);
 
@@ -28,7 +28,7 @@ namespace parsing::JackCompiler
         }
     }
 
-    void Compiler::compileClass()
+    void CompilerEngine::compileClass()
     {
         addLine("<class>");
         processTerminalReserved("class");
@@ -55,7 +55,7 @@ namespace parsing::JackCompiler
         addLine("</class>");
     }
 
-    void Compiler::compileClassVariable(){
+    void CompilerEngine::compileClassVariable(){
         String token;
         addLine("<classVarDec>");
         processTerminalReserved(tokenizer.getCurrToken()); //the field/static keyword
@@ -69,7 +69,7 @@ namespace parsing::JackCompiler
         addLine("</classVarDec>");
     }
 
-    void Compiler::compileSubroutine(){
+    void CompilerEngine::compileSubroutine(){
         addLine("<subroutineDec>");
         if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD)
         {
@@ -114,7 +114,7 @@ namespace parsing::JackCompiler
         addLine("</subroutineDec>");
     }
 
-    void Compiler::compileParameters(){
+    void CompilerEngine::compileParameters(){
         addLine("<parameterList>");
 
         if (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD){
@@ -150,7 +150,7 @@ namespace parsing::JackCompiler
         addLine("</parameterList>");
     }
 
-    void Compiler::compileSubroutineBody(){
+    void CompilerEngine::compileSubroutineBody(){
         addLine("<subroutineBody>");
         processTerminalReserved("{");
 
@@ -166,7 +166,7 @@ namespace parsing::JackCompiler
         addLine("</subroutineBody>");
     }
 
-    void Compiler::compileVarDeclaration(){
+    void CompilerEngine::compileVarDeclaration(){
         addLine("<varDec>");
         processTerminalReserved("var");
 
@@ -201,7 +201,7 @@ namespace parsing::JackCompiler
         addLine("</varDec>");
     }
 
-    void Compiler::compileStatements(){
+    void CompilerEngine::compileStatements(){
         addLine("<statements>");
         JackKeyword keyword;
             while (tokenizer.getTokenType() == JackTokenType::JT_KEYWORD){
@@ -239,7 +239,7 @@ namespace parsing::JackCompiler
         addLine("</statements>");
     }
 
-    void Compiler::compileLet(){
+    void CompilerEngine::compileLet(){
         addLine("<LetStatement>");
         processTerminalReserved("let");
         processTerminalDefined();
@@ -255,7 +255,7 @@ namespace parsing::JackCompiler
         addLine("</LetStatement>");
     }
 
-    void Compiler::compileIf(){
+    void CompilerEngine::compileIf(){
         addLine("<ifStatement>");
         processTerminalReserved("if");
         processTerminalReserved("(");
@@ -274,7 +274,7 @@ namespace parsing::JackCompiler
         addLine("</ifStatement>");
     }
 
-    void Compiler::compileWhile(){
+    void CompilerEngine::compileWhile(){
         addLine("<whileStatement>");
         processTerminalReserved("while");
         processTerminalReserved("(");
@@ -286,7 +286,7 @@ namespace parsing::JackCompiler
         addLine("</whileStatement>");
     }
 
-    void Compiler::compileDo(){
+    void CompilerEngine::compileDo(){
         addLine("<doStatement>");
         processTerminalReserved("do");
         //subroutine call
@@ -304,7 +304,7 @@ namespace parsing::JackCompiler
         addLine("</doStatement>");
     }
 
-    void Compiler::compileReturn(){
+    void CompilerEngine::compileReturn(){
         addLine("<returnStatement>");
         processTerminalReserved("return");
         compileExpression();
@@ -312,7 +312,7 @@ namespace parsing::JackCompiler
         addLine("</returnStatement>");
     }
 
-    void Compiler::compileExpression(){
+    void CompilerEngine::compileExpression(){
         //todo: use a modified recursive descent parser to make use of the operator precedence
         //check RDP.cpp for the general idea of using trees to generate the order
         addLine("<expression>");
@@ -328,7 +328,7 @@ namespace parsing::JackCompiler
         addLine("</expression>");
     }
 
-    void Compiler::compileTerm(){
+    void CompilerEngine::compileTerm(){
         addLine("<term>");
         switch(tokenizer.getTokenType())
         {
@@ -405,7 +405,7 @@ namespace parsing::JackCompiler
         addLine("</term>");
     }
 
-    void Compiler::compileExpressionList(){
+    void CompilerEngine::compileExpressionList(){
         addLine("<expressionList>");
         //check if next token is the closing parenthesis, which corresponds to an empty expressionList
         if (! (tokenizer.getCurrToken() == ")") )
@@ -420,7 +420,7 @@ namespace parsing::JackCompiler
         addLine("</expressionList>");
     }
 
-    void Compiler::processTerminalReserved(const String& token){
+    void CompilerEngine::processTerminalReserved(const String& token){
         String currToken = tokenizer.getCurrToken();
         if (token == currToken){
             switch(tokenizer.getTokenType()){
@@ -439,7 +439,7 @@ namespace parsing::JackCompiler
         tokenizer.advanceToken();
     }
 
-    void Compiler::processTerminalDefined(){
+    void CompilerEngine::processTerminalDefined(){
         String currToken = tokenizer.getCurrToken();
         switch (tokenizer.getTokenType()){
             case JackTokenType::JT_IDENTIFIER:
