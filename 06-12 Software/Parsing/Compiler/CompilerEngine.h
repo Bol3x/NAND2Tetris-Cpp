@@ -1,6 +1,7 @@
 #include "JackCompiler.h"
 #include "Tokenizer.cpp"
 #include "../FileGenerator.cpp"
+#include "CompilerSymbolTable.cpp"
 
 namespace parsing::JackCompiler
 {
@@ -102,10 +103,24 @@ namespace parsing::JackCompiler
             void compileExpressionList();
 
         private:
-            void processTerminalReserved(const String& token);
 
-            void processTerminalDefined();
+            void processIdentifier();
+
+            void processIntConstant();
+
+            void processStringConstant();
+
+            void processKeyword();
+
+            void processSymbol();
+
+            bool expectKeyword(const String& keyword);
+
+            bool expectSymbol(const char& symbol);
 
             Tokenizer tokenizer;
+            String className;
+            CompilerSymbolTable classSymbolTable;
+            CompilerSymbolTable subroutineSymbolTable;
     };
 }

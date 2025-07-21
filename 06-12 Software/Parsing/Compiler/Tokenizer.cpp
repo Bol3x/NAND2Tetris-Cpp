@@ -108,7 +108,7 @@ namespace parsing::JackCompiler
         if (hasMoreTokens()){
             currToken = tokens.front();
             tokens.pop();
-            //std::cout << "current token: " << currToken << std::endl;
+            std::cout << "current token: " << currToken << std::endl;
             return;
         }
 
