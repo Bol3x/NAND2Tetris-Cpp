@@ -1,19 +1,21 @@
 #include "JackCompiler.h"
 #include "Tokenizer.cpp"
-#include "FileGenerator.cpp"
+#include "CompilerSymbolTable.cpp"
+#include "VMWriter.cpp"
 
 namespace parsing::JackCompiler
 {
-    class Compiler : public FileGenerator
+    class CompilerEngine
     {
         public:
-            /**
-             * @brief Creates a new Compiler object to produce VM instructions
-             * 
-             * @param filename - file output of the compiler
-             */
-            Compiler(const String& inputFile, const String& outputFile);
 
+            /**
+             * @brief Compiles the file from the first to last token detected
+             * 
+             * @param in - input filename or path
+             */
+            void compileFile(const String& in);
+            
             /**
              * @brief generates VM instructions for a class declaration.
              * 
@@ -42,7 +44,7 @@ namespace parsing::JackCompiler
              * @brief generates VM instructions for a subroutine's body
              * 
              */
-            void compileSubroutineBody();
+            void compileSubroutineBody(const String& funcName);
 
             /**
              * @brief generates VM instructions for declaring variables
@@ -92,15 +94,45 @@ namespace parsing::JackCompiler
              */
             void compileExpression();
 
+            /**
+             * @brief Compiles a term
+             * 
+             */
             void compileTerm();
 
-            void compileExpressionList();
+            int compileExpressionList();
+
+            VMWriter writer;
 
         private:
-            void processTerminalReserved(const String& token);
 
-            void processTerminalDefined();
+            void processIdentifier();
+
+            void processIntConstant();
+
+            void processStringConstant();
+
+            void processKeyword();
+
+            void processSymbol();
+
+            void processUnaryOperator(const char& op);
+
+            void processOperator(const char& op);
+
+            bool expectKeyword(const String& keyword);
+
+            bool expectSymbol(const char& symbol);
+
+            symbolData getSymbolDataOf(const String& varName);
+
+            String className;
+            CompilerSymbolTable classSymbolTable;
+            CompilerSymbolTable subroutineSymbolTable;
+            JackKeyword currSubroutineType;
+            String currReturntype;
 
             Tokenizer tokenizer;
+            int numLabels = 0;
     };
 }

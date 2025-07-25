@@ -1,11 +1,15 @@
 #pragma once
 
 #include "../Parsing.h"
+#include "../FileGenerator.h"
 #include <unordered_map>
 #include <unordered_set>
 
 namespace parsing::JackCompiler
 {
+
+    const int MAX_INT_VALUE = 0x7FFF; //32767, last bit for negative
+
     enum class JackTokenType
     {
         JT_KEYWORD,
@@ -58,7 +62,70 @@ namespace parsing::JackCompiler
         '{', '}', '(', ')', '[', ']', '.', ',', ';', '+', '-', '*', '/', '&', '|', '<', '>', '=', '~'
     };
 
+    const std::unordered_set<char> operators = {
+        '+', '-', '*', '/', '&', '|', '<', '>', '=', '~'
+    };
+    
+    const std::unordered_map<char, int> operatorPrec = {
+        {'*', 5}, {'/', 5},
+        {'+', 4}, {'-', 4},
+        {'<', 3}, {'>', 3},
+        {'=', 2},
+        {'&', 1},
+        {'|', 0}
+    };
+
+    enum class JackCompilerType
+    {
+        JC_STATIC,
+        JC_FIELD,
+        JC_ARG,
+        JC_VAR,
+        JC_NONE
+    };
+
+    enum class JackVMSegment
+    {
+        JVT_CONSTANT,
+        JVT_ARGUMENT,
+        JVT_LOCAL,
+        JVT_STATIC,
+        JVT_THIS,
+        JVT_THAT,
+        JVT_POINTER,
+        JVT_TEMP
+    };
+
+    const std::unordered_map<JackCompilerType, JackVMSegment> compilerTypeToVMSegment(
+        {
+        {JackCompilerType::JC_STATIC,  JackVMSegment::JVT_STATIC},
+        {JackCompilerType::JC_FIELD, JackVMSegment::JVT_THIS},
+        {JackCompilerType::JC_ARG, JackVMSegment::JVT_ARGUMENT},
+        {JackCompilerType::JC_VAR, JackVMSegment::JVT_LOCAL}
+        }
+    );
+
+    enum class JackVMCommand
+    {
+        JVC_ADD,
+        JVC_SUB,
+        JVC_NEG,
+        JVC_EQ,
+        JVC_GT,
+        JVC_LT,
+        JVC_AND,
+        JVC_OR,
+        JVC_NOT
+    };
+
+    typedef struct symbol_data_t {
+        int index;
+        String datatype;
+        JackCompilerType kind;
+    } symbolData;
 
     class Tokenizer;
-    class Compiler;
+    class CompilerEngine;
+    class CompilerSymbolTable;
+    class VMWriter;
 }

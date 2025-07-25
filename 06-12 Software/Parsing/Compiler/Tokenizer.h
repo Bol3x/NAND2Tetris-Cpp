@@ -8,13 +8,6 @@ namespace parsing::JackCompiler
     {
         public:
             /**
-             * @brief Creates a new compiler object to parse the Jack langauge
-             * 
-             * @param filename - file output of the tokenizer
-             */
-            Tokenizer(const String& filename);
-
-            /**
              * @brief checks if there are remaining tokens in the stream
              * 
              */
@@ -34,6 +27,11 @@ namespace parsing::JackCompiler
              */
             void advanceToken();
 
+            /**
+             * @brief gets the upcoming token to compile
+             * 
+             * @return String 
+             */
             String getCurrToken();
 
             /**

@@ -3,7 +3,6 @@
 namespace parsing::HackAssembly
 {
         BinaryGenerator::BinaryGenerator(const String& filename) : 
-        FileGenerator(filename),
         compMap(std::unordered_map<String, String> {
             {"0", "101010"},
             {"1", "111111"},
@@ -32,7 +31,10 @@ namespace parsing::HackAssembly
                 {"JNE", "101"},
                 {"JLE", "110"},
                 {"JMP", "111"}
-            }){}
+            })
+        {
+            openFile(filename);
+        }
 
         String BinaryGenerator::generateCompBinary(const String& comp, const String& dest, const String& jump)
         {

@@ -36,7 +36,7 @@ namespace parsing{
             std::getline(inputFile, line);
 
             //remove leading and trailing spaces and comments
-            line = std::regex_replace(line, std::regex("^[\t ]+| *//.*"), "");
+            line = std::regex_replace(line, std::regex("^[\t ]+| *//.*|[\t ]+$"), "");
 
             if (line.length() == 0)
             {
@@ -51,6 +51,10 @@ namespace parsing{
 
     void Parser::openFile(const String& file)
     {
+        if (inputFile.is_open())
+        {
+            inputFile.close();
+        }
         inputFile.open(file);
     }
 

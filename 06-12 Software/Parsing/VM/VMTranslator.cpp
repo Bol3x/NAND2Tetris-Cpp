@@ -1,7 +1,4 @@
 #include "VMTranslator.h"
-#include <iostream>
-
-using namespace std;
 
 namespace parsing::HackVM
 {
@@ -11,7 +8,7 @@ namespace parsing::HackVM
 
     void VMTranslator::generateAssembly(const String& filePath, const String& fileName)
     {
-        std::cout << filePath+"\\"+fileName+".vm" << std::endl;
+        //std::cout << filePath+"\\"+fileName+".vm" << std::endl;
         reader.openFile(filePath+"\\"+fileName+".vm");
         writer.updateVMName(fileName);
 

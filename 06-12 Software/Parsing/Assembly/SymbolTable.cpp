@@ -39,7 +39,7 @@ namespace parsing::HackAssembly{
         if (! containsEntry(symbol))
         {
             table.insert({symbol, instructionAddress});
-            std::cout << "New symbol added: " << symbol << " at address " << instructionAddress << std::endl;
+            //std::cout << "New symbol added: " << symbol << " at address " << instructionAddress << std::endl;
         }
     }
 
