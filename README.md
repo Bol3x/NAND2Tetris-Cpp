@@ -20,10 +20,14 @@ The programs are mainly run on the official web IDE of the NAND2Tetris project (
 - Chapters 1-5 are executed and tested in the Hardware Simulator, each building up to create a working CPU with a set of basic ALU operations
 - Chapters 6-12 are combined as a single application, but correspond to different sections of the compilation scheme
     - In the Parsing folder of the software programs:
-        - Assembly - Chapter 6 (CPU Emulator)
+        - Hack Assembly - Chapter 6 (CPU Emulator)
         - Virtual Machine Instructions - Chapters 7-8 (VM Emulator, CPU Emulator)
         - Jack Compiler - Chapters 9-11 (Jack Compiler, VM Emulator)
         - Operating System Library - Chapter 12 (Jack Compiler) <- Current todo!
+
+To run the Jack compiler, run `jackmain.cpp` in the software folder and enter the filename (or folder name) of the Jack file/s to compile into VM instructions.
+
+To run the VM translator, run `main.cpp` in the software folder and enter the filename (or folder name) of the VM file/s to translate into binary opcodes corresponding to Hack assembly commands.
 
 ### Todo List
 ___
