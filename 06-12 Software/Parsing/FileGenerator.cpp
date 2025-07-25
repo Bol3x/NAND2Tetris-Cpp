@@ -28,13 +28,13 @@ namespace parsing
         }
     }
 
-    void FileGenerator::openFile(const String& file)
+    void FileGenerator::openFile(const String& fileName)
     {
         if (outputFile.is_open())
         {
             closeFile();
         }
-        outputFile.open(file, std::ios::out);
+        outputFile.open(fileName+".vm", std::ios::out);
     }
 
     void FileGenerator::closeFile()

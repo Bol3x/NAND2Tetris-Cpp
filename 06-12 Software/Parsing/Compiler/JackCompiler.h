@@ -96,6 +96,15 @@ namespace parsing::JackCompiler
         JVT_TEMP
     };
 
+    const std::unordered_map<JackCompilerType, JackVMSegment> compilerTypeToVMSegment(
+        {
+        {JackCompilerType::JC_STATIC,  JackVMSegment::JVT_STATIC},
+        {JackCompilerType::JC_FIELD, JackVMSegment::JVT_THIS},
+        {JackCompilerType::JC_ARG, JackVMSegment::JVT_ARGUMENT},
+        {JackCompilerType::JC_VAR, JackVMSegment::JVT_LOCAL}
+        }
+    );
+
     enum class JackVMCommand
     {
         JVC_ADD,

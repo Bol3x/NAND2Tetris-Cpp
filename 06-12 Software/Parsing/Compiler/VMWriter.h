@@ -3,7 +3,7 @@
 
 namespace parsing::JackCompiler
 {
-    class VMWriter : FileGenerator
+    class VMWriter : public FileGenerator
     {
         public:
             void writePushInstruction(const JackVMSegment& segment, const int& index);

@@ -1,11 +1,11 @@
 #include "JackCompiler.h"
 #include "Tokenizer.cpp"
-#include "../FileGenerator.cpp"
 #include "CompilerSymbolTable.cpp"
+#include "VMWriter.cpp"
 
 namespace parsing::JackCompiler
 {
-    class CompilerEngine : public FileGenerator
+    class CompilerEngine
     {
         public:
 
@@ -15,7 +15,7 @@ namespace parsing::JackCompiler
              * @param in - input filename or path
              */
             void compileFile(const String& in);
-
+            
             /**
              * @brief generates VM instructions for a class declaration.
              * 
@@ -44,7 +44,7 @@ namespace parsing::JackCompiler
              * @brief generates VM instructions for a subroutine's body
              * 
              */
-            void compileSubroutineBody();
+            void compileSubroutineBody(const String& funcName);
 
             /**
              * @brief generates VM instructions for declaring variables
@@ -100,7 +100,9 @@ namespace parsing::JackCompiler
              */
             void compileTerm();
 
-            void compileExpressionList();
+            int compileExpressionList();
+
+            VMWriter writer;
 
         private:
 
@@ -114,13 +116,23 @@ namespace parsing::JackCompiler
 
             void processSymbol();
 
+            void processUnaryOperator(const char& op);
+
+            void processOperator(const char& op);
+
             bool expectKeyword(const String& keyword);
 
             bool expectSymbol(const char& symbol);
 
-            Tokenizer tokenizer;
+            symbolData getSymbolDataOf(const String& varName);
+
             String className;
             CompilerSymbolTable classSymbolTable;
             CompilerSymbolTable subroutineSymbolTable;
+            JackKeyword currSubroutineType;
+            String currReturntype;
+
+            Tokenizer tokenizer;
+            int numLabels = 0;
     };
 }

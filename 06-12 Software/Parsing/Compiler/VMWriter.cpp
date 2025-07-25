@@ -52,39 +52,39 @@ namespace parsing::JackCompiler
         switch(segment)
         {
             case JackVMSegment::JVT_CONSTANT:
-                instruction.append(" constant");
+                instruction.append(" constant ");
                 break;
 
             case JackVMSegment::JVT_ARGUMENT:
-                instruction.append(" argument");
+                instruction.append(" argument ");
                 break;
 
             case JackVMSegment::JVT_LOCAL:
-                instruction.append(" local");
+                instruction.append(" local ");
                 break;
 
             case JackVMSegment::JVT_STATIC:
-                instruction.append(" static");
+                instruction.append(" static ");
                 break;
 
             case JackVMSegment::JVT_POINTER:
-                instruction.append(" pointer");
+                instruction.append(" pointer ");
                 break;
 
             case JackVMSegment::JVT_THIS:
-                instruction.append(" this");
+                instruction.append(" this ");
                 break;
 
             case JackVMSegment::JVT_THAT:
-                instruction.append(" that");
+                instruction.append(" that ");
                 break;
 
             case JackVMSegment::JVT_TEMP:
-                instruction.append(" temp");
+                instruction.append(" temp ");
                 break;
         }
 
-        instruction.append(" " + std::to_string(index));
+        instruction.append(std::to_string(index));
 
         addLine(instruction);
     }
@@ -130,7 +130,7 @@ namespace parsing::JackCompiler
 
     void VMWriter::writeLabel(const String& label)
     {
-        addLine("(" + label + ")");
+        addLine("label " + label);
     }
 
     void VMWriter::writeGotoInstruction(const String& label)
@@ -145,12 +145,12 @@ namespace parsing::JackCompiler
 
     void VMWriter::writeCallInstruction(const String& name, const int& nArgs)
     {
-        addLine("call " + name + std::to_string(nArgs));
+        addLine("call " + name + " " + std::to_string(nArgs));
     }
 
     void VMWriter::writeFunctionDeclaration(const String& name, const int& nVars)
     {
-        addLine("function " + name + std::to_string(nVars));
+        addLine("function " + name + " " + std::to_string(nVars));
     }
 
     void VMWriter::writeReturnInstruction()

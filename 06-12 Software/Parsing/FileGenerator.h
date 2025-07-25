@@ -25,7 +25,7 @@ class parsing::FileGenerator
          * Make sure that there is no current file still open
          * 
          */
-        void openFile(const String& filename);
+        void openFile(const String& fileName);
 
         /**
          * @brief Closes outputfile.
